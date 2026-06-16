@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sam van der Hoorn — UI/UX Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:#080808; --surface:#1a1a1a; --surface2:#222222;
+      --border:#2e2e2e; --border2:#3d3d3d;
+      --text:#f0ede8; --text-muted:#888888; --text-dim:#444444;
+      --accent:#c8b89a; --btn-bg:#e8e0d4; --green:#4caf7d;
+      --pr-gold:#c9a227;
+      --pr-gold-dim:rgba(201,162,39,.15);
+      --pr-gold-border:rgba(201,162,39,.25);
+      --serif:'Montserrat',system-ui,sans-serif;
+      --sans:'Montserrat',system-ui,sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family:var(--sans); background:var(--bg); color:var(--text); line-height:1.6; -webkit-font-smoothing:antialiased; }
+    a { color:inherit; text-decoration:none; }
+
+    .cursor { width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform .15s ease,width .2s,height .2s;transform:translate(-50%,-50%); }
+    .cursor.big { width:32px;height:32px;background:transparent;border:1px solid var(--accent); }
+
+    nav { position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid var(--border2);background:rgba(15,15,15,0.97);backdrop-filter:blur(12px); }
+    .nav-logo img { height:36px;width:auto;display:block;filter:brightness(0) invert(1); }
+    .nav-links { display:flex;gap:36px;list-style:none; }
+    .nav-links a { font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#d0d0d0;transition:color .2s;font-weight:600; }
+    .nav-links a:hover { color:#ffffff; }
+    .nav-cta { font-size:12px;font-weight:600;color:var(--bg);background:var(--btn-bg);padding:9px 22px;border-radius:100px;transition:opacity .2s; }
+    .nav-cta:hover { opacity:.85; }
+
+    .hero { min-height:100vh;position:relative;overflow:hidden;border-bottom:1px solid var(--border); }
+    .hero-bg { position:absolute;inset:0;display:flex; }
+    .hero-bg-half { position:relative;width:50%;height:100%;overflow:hidden; }
+    .hero-bg-half img { width:100%;height:100%;object-fit:cover;object-position:center 30%; }
+    .hero-bg-half.is-blur img { filter:blur(6px) grayscale(.3) brightness(.55);transform:scale(1.08); }
+    .hero-bg-half.is-blur::after { content:'';position:absolute;inset:0;background:rgba(8,8,8,.35); }
+    .hero-bg-half.is-sharp::after { content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,.55),rgba(8,8,8,0) 45%); }
+    .hero-bg-seam { position:absolute;top:0;bottom:0;left:50%;width:1px;background:rgba(255,255,255,.18);z-index:2; }
+
+    .hero-topbar { position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:104px 48px 0; }
+    .hero-eyebrow { display:inline-flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#fff;font-weight:600;opacity:0;animation:fadeUp .8s .1s forwards; }
+    .hero-eyebrow-dot { width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite; }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .hero-meta-top { display:flex;gap:28px; }
+    .hero-meta-top span { font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65);font-weight:600;opacity:0;animation:fadeUp .8s .2s forwards; }
+
+    .hero-titlewrap { position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-start;padding:148px 48px 0; }
+    h1.hero-title { font-family:var(--serif);font-size:clamp(34px,6vw,88px);line-height:.98;letter-spacing:-.02em;font-weight:700;color:#fff;opacity:0;animation:fadeUp 1s .25s forwards;text-shadow:0 6px 40px rgba(0,0,0,.35); }
+    h1.hero-title em { font-style:normal;color:var(--accent); }
+    h1.hero-title.hero-title-cutout { color:transparent;background-image:url('images/homepage-sam.jpg');background-size:105% auto;background-position:38% 30%;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;text-shadow:none; }
+    .hero-sub { font-size:14px;color:rgba(240,237,232,.85);max-width:420px;line-height:1.75;margin-top:24px;opacity:0;animation:fadeUp .9s .45s forwards;font-weight:300; }
+    .hero-actions { display:flex;gap:14px;margin-top:32px;opacity:0;animation:fadeUp .9s .6s forwards; }
+    .btn-primary { display:inline-flex;align-items:center;gap:8px;background:var(--btn-bg);color:var(--bg);font-size:13px;font-weight:600;padding:13px 28px;border-radius:100px;transition:opacity .2s,transform .2s;font-family:var(--sans); }
+    .btn-primary:hover { opacity:.88;transform:translateY(-1px); }
+    .btn-ghost { display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.35);color:#fff;font-size:13px;padding:13px 28px;border-radius:100px;transition:border-color .2s,color .2s,transform .2s;font-family:var(--sans); }
+    .btn-ghost:hover { border-color:#fff;transform:translateY(-1px); }
+
+    .hero-cards { position:absolute;z-index:3;left:48px;right:calc(50% + 48px);bottom:32px;display:flex;gap:12px;opacity:0;animation:fadeUp .9s .7s forwards; }
+    .hero-card { flex:1;border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 14px;background:rgba(10,10,10,.45);backdrop-filter:blur(8px); }
+    .hero-card-label { font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:4px;font-weight:500; }
+    .hero-card-value { font-size:12px;font-weight:600;letter-spacing:-.01em;color:#fff; }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    @media (max-width:860px){
+      .hero { height:auto;min-height:100vh; }
+      .hero-bg-half.is-blur { display:none; }
+      .hero-bg-half.is-sharp { width:100%;height:100%; }
+      .hero-bg-half.is-sharp::after { background:linear-gradient(to bottom,rgba(8,8,8,.55),rgba(8,8,8,.35) 35%,rgba(8,8,8,.65) 100%); }
+      .hero-bg-seam { display:none; }
+      .hero-topbar { flex-direction:column;align-items:flex-start;gap:14px;padding:96px 24px 0; }
+      .hero-meta-top { display:none; }
+      .hero-titlewrap { position:relative;inset:auto;padding:140px 24px 40px;min-height:0; }
+      h1.hero-title { font-size:clamp(40px,14vw,84px); }
+      h1.hero-title.hero-title-cutout { color:#fff;background-image:none !important; }
+      .hero-sub { font-size:13px; }
+      .hero-actions { flex-wrap:wrap; }
+      .hero-cards { position:relative;left:0;right:auto;bottom:auto;flex-wrap:wrap;padding:0 24px 24px;margin-top:28px; }
+      .hero-card { flex:1 1 140px; }
+    }
+
+    .ticker-wrap { padding:44px 0;overflow:hidden;background:var(--bg);border-bottom:1px solid var(--border); }
+    .ticker { overflow:hidden;height:40px;display:flex;align-items:center;border:1px solid var(--border);transform:rotate(-1deg); }
+    .ticker-inner { display:flex;animation:ticker 28s linear infinite;white-space:nowrap; }
+    .ticker-item { display:inline-flex;align-items:center;gap:20px;font-size:11px;letter-spacing:.1em;color:#ffffff;padding:0 28px;font-weight:500;text-transform:uppercase; }
+    @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    section { border-bottom:1px solid var(--border); }
+    .container { padding:80px 48px; }
+    .section-eyebrow { display:flex;align-items:center;gap:14px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px;font-weight:600; }
+    .section-eyebrow::after { content:'';flex:1;height:1px;background:var(--border); }
+    .section-title { font-family:var(--serif);font-size:clamp(26px,3vw,40px);letter-spacing:-.02em;line-height:1;font-weight:700; }
+
+    /* PORTFOLIO CARDS */
+    .work-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px; }
+    .work-card { border:1px solid var(--border);border-radius:18px;overflow:hidden;background:var(--surface);cursor:pointer;transition:border-color .25s,transform .25s; }
+    .work-card:hover { border-color:var(--border2);transform:translateY(-3px); }
+    .work-card.featured { }
+    .work-thumb {
+      background:var(--surface2);aspect-ratio:4/3;
+      display:flex;align-items:center;justify-content:center;
+      position:relative;overflow:hidden;
+    }
+    .work-thumb img {
+      width:100%;height:100%;object-fit:cover;
+      transition:transform .4s ease;
+      opacity:1;
+    }
+    .work-card:hover .work-thumb img { transform:scale(1.03); }
+    .work-card.featured .work-thumb { aspect-ratio:4/3; }
+    .work-chip { position:absolute;top:16px;left:16px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:100px;background:rgba(10,10,10,0.75);border:1px solid var(--border2);color:var(--text-muted);backdrop-filter:blur(4px);font-weight:600; }
+    .work-arrow-btn { position:absolute;bottom:16px;right:16px;width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0.7);transition:opacity .25s,transform .25s;color:var(--bg);font-size:16px; }
+    .work-card:hover .work-arrow-btn { opacity:1;transform:scale(1); }
+    .work-info { padding:24px 28px; }
+    .work-year { font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-dim);margin-bottom:8px;font-weight:600; }
+    .work-title { font-size:20px;font-weight:600;letter-spacing:-.02em;margin-bottom:8px; }
+    .work-desc { font-size:13px;color:var(--text-muted);line-height:1.6;font-weight:300; }
+    .work-tags { display:flex;gap:6px;flex-wrap:wrap;margin-top:16px; }
+    .work-tag { font-size:10px;padding:4px 12px;border-radius:100px;border:1px solid var(--border2);color:var(--text-muted);letter-spacing:.05em;font-weight:500; }
+    .work-cta { display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);margin-top:16px;transition:gap .2s;font-weight:500; }
+    .work-card:hover .work-cta { gap:10px; }
+
+    /* ABOUT */
+    .about-grid { display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start; }
+    .about-statement { font-family:var(--serif);font-size:clamp(20px,2.2vw,27px);line-height:1.45;letter-spacing:-.02em;color:#d4ccc4;margin-top:32px; }
+    .about-statement em { color:var(--accent);font-style:normal; }
+    .about-body { font-size:13px;color:var(--text-muted);line-height:1.8;margin-top:18px;font-weight:300; }
+    .about-photo-wrap { display:flex; }
+    .about-top { display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;margin-bottom:16px; }
+    .about-top .about-photo-wrap { display:flex;align-items:center;justify-content:center; }
+    .about-photo-blob { width:210px;height:210px;background:var(--surface);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;border-radius:50%; }
+    .about-photo-blob img { width:100%;height:100%;object-fit:cover;object-position:31% center;transform:scale(1.6);transform-origin:31% center; }
+    .photo-initial { font-family:var(--serif);font-size:36px;color:var(--accent); }
+    .carousel-wrap { position:relative;overflow:hidden;border-radius:14px;background:var(--surface); }
+    .carousel-track { display:flex;transition:transform .45s cubic-bezier(.25,1,.5,1); }
+    .carousel-slide { min-width:100%;aspect-ratio:5/4;position:relative;overflow:hidden;background:var(--surface2); }
+    .carousel-slide img { width:100%;height:100%;object-fit:cover;display:block; }
+    .carousel-label { position:absolute;bottom:0;left:0;right:0;padding:10px 14px;font-size:11px;color:#fff;letter-spacing:.08em;font-weight:600;text-transform:uppercase;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 100%); }
+    .carousel-dots { display:flex;justify-content:center;gap:6px;padding:12px;background:transparent; }
+    .carousel-dot { width:5px;height:5px;border-radius:50%;background:var(--border2);cursor:pointer;transition:background .2s,transform .2s; }
+    .carousel-dot.active { background:var(--accent);transform:scale(1.3); }
+    .carousel-btn { position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(10,10,10,.7);border:1px solid var(--border2);color:var(--text-muted);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;z-index:2; }
+    .carousel-btn:hover { background:var(--surface);color:var(--text); }
+    .carousel-btn.prev { left:10px; }
+    .carousel-btn.next { right:10px; }
+    .about-facts { display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:16px; }
+    .fact { background:var(--bg);padding:16px 18px; }
+    .fact-label { font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:5px;font-weight:600; }
+    .fact-value { font-size:14px;font-weight:600;letter-spacing:-.01em; }
+
+    /* GOLD SHIMMER */
+    @keyframes goldShimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    .gold {
+      background: linear-gradient(90deg, #a67c00 0%, #c9a227 30%, #f5d97a 50%, #c9a227 70%, #a67c00 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: goldShimmer 3s linear infinite;
+    }
+
+    /* PR COACHING */
+    .pr-section { background:var(--surface); }
+    .pr-inner { display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center; }
+    .pr-badge { display:inline-flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pr-gold);margin-bottom:20px;padding:5px 14px;border-radius:100px;border:1px solid var(--pr-gold-border);background:var(--pr-gold-dim);font-weight:600; }
+    .pr-title { font-family:var(--serif);font-size:clamp(24px,2.8vw,38px);line-height:1.1;letter-spacing:-.02em;font-weight:700; }
+    .pr-title em { color:var(--pr-gold);font-style:normal; }
+    .pr-body { font-size:13px;color:var(--text-muted);line-height:1.8;margin-top:20px;font-weight:300; }
+    .pr-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:32px; }
+    .pr-stat { background:var(--bg);padding:20px;text-align:center; }
+    .pr-stat-num { font-family:var(--serif);font-size:32px;color:var(--pr-gold);letter-spacing:-.03em;line-height:1; }
+    .pr-stat-label { font-size:11px;color:var(--text-dim);margin-top:4px;letter-spacing:.06em;font-weight:500; }
+    .pr-roles { display:flex;flex-direction:column;gap:12px; }
+    .pr-role-card { border:1px solid var(--border);border-radius:14px;padding:22px 24px;background:var(--bg);transition:border-color .2s; }
+    .pr-role-card:hover { border-color:var(--pr-gold-border); }
+    .pr-role-tag { font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pr-gold);margin-bottom:8px;font-weight:600; }
+    .pr-role-title { font-size:16px;font-weight:600;letter-spacing:-.02em;margin-bottom:8px; }
+    .pr-role-desc { font-size:13px;color:var(--text-muted);line-height:1.6;font-weight:300; }
+    .pr-link { display:inline-flex;align-items:center;gap:8px;margin-top:28px;font-size:12px;color:var(--pr-gold);letter-spacing:.04em;transition:gap .2s;font-weight:600; }
+    .pr-link:hover { gap:12px; }
+
+    /* SKILLS */
+    .skills-layout { display:grid;grid-template-columns:1fr 1.4fr;gap:24px;align-items:center;margin-top:48px; }
+    .skills-image { width:100%;height:auto;border-radius:18px;display:block; }
+    .skills-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:18px;overflow:hidden; }
+    .skill-card { background:var(--bg);padding:32px 28px;display:flex;flex-direction:column;gap:10px;transition:background .25s;position:relative;overflow:hidden; }
+    .skill-card::after { content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .35s ease; }
+    .skill-card:hover { background:var(--surface); }
+    .skill-card:hover::after { transform:scaleX(1); }
+    .skill-num { font-size:10px;letter-spacing:.15em;color:var(--accent);font-weight:600; }
+    .skill-name { font-size:18px;font-weight:600;letter-spacing:-.02em; }
+    .skill-desc { font-size:12px;color:var(--text-muted);line-height:1.55;font-weight:300; }
+    .skill-bar { height:2px;background:var(--border2);border-radius:2px;margin-top:auto;padding-top:12px;position:relative; }
+    .skill-bar-inner { height:2px;background:var(--accent);border-radius:2px;position:absolute;top:12px;left:0;width:0;transition:width 1.2s cubic-bezier(.16,1,.3,1); }
+
+    /* CONTACT */
+    .contact-inner { display:grid;grid-template-columns:1fr auto;gap:60px;align-items:center; }
+    .contact-title { font-family:var(--serif);font-size:clamp(32px,3.8vw,52px);line-height:1;letter-spacing:-.03em;font-weight:700;margin-top:16px; }
+    .contact-title em { color:var(--accent);font-style:normal; }
+    .contact-sub { font-size:13px;color:var(--text-muted);line-height:1.75;max-width:380px;margin-top:20px;font-weight:300; }
+    .contact-email { display:inline-flex;align-items:center;gap:10px;background:var(--btn-bg);color:var(--bg);font-size:13px;font-weight:600;padding:14px 30px;border-radius:100px;margin-top:32px;transition:opacity .2s,transform .2s; }
+    .contact-email:hover { opacity:.88;transform:translateY(-2px); }
+    .contact-links { display:flex;flex-direction:column;gap:14px;align-items:flex-end; }
+    .contact-link { font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:8px;letter-spacing:.05em;transition:color .2s,gap .2s;font-weight:500; }
+    .contact-link:hover { color:var(--text);gap:12px; }
+
+    footer { padding:22px 48px;display:flex;align-items:center;justify-content:space-between; }
+    .footer-copy { font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500; }
+    .footer-nav { display:flex;gap:28px; }
+    .footer-nav a { font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500;transition:color .2s; }
+    .footer-nav a:hover { color:var(--text-muted); }
+
+    .reveal { opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease; }
+    .reveal.visible { opacity:1;transform:translateY(0); }
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="nav-logo"><img src="images/logo.png" alt="Sam van der Hoorn"></div>
+  <ul class="nav-links">
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#over-mij">Over mij</a></li>
+    <li><a href="#pr-coaching">PR Coaching</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Contact opnemen →</a>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="hero-bg-half is-blur"><img src="images/homepage-sam.jpg" alt=""/></div>
+    <div class="hero-bg-half is-sharp"><img src="images/homepage-sam.jpg" alt=""/></div>
+  </div>
+  <div class="hero-bg-seam"></div>
+
+  <div class="hero-topbar">
+    <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>UI/UX Designer · CMD Amsterdam</div>
+  </div>
+
+  <div class="hero-titlewrap">
+    <h1 class="hero-title hero-title-cutout" id="heroTitle">Sam van der<br>Hoorn.</h1>
+    <p class="hero-sub">Ik ontwerp digitale ervaringen die gebruiksvriendelijk én visueel onvergetelijk zijn. Van eerste schets tot werkend prototype.</p>
+    <div class="hero-actions">
+      <a href="#portfolio" class="btn-primary">Bekijk mijn werk →</a>
+      <a href="downloads/cv-sam.pdf" class="btn-ghost">CV downloaden</a>
+    </div>
+  </div>
+
+  <div class="hero-cards">
+    <div class="hero-card"><div class="hero-card-label">Beschikbaar voor</div><div class="hero-card-value">Stages & freelance</div></div>
+    <div class="hero-card"><div class="hero-card-label">Gevestigd in</div><div class="hero-card-value">Amsterdam, NL</div></div>
+    <div class="hero-card"><div class="hero-card-label">Studie</div><div class="hero-card-value">CMD · HvA · Jaar 4</div></div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item">· UI/UX Design ·</span><span class="ticker-item">· Figma ·</span><span class="ticker-item">· Prototyping ·</span><span class="ticker-item">· Adobe Illustrator ·</span><span class="ticker-item">· HTML / CSS / JS ·</span><span class="ticker-item">· After Effects ·</span><span class="ticker-item">· Video editing ·</span><span class="ticker-item">· Gebruikersonderzoek ·</span>
+      <span class="ticker-item">· UI/UX Design ·</span><span class="ticker-item">· Figma ·</span><span class="ticker-item">· Prototyping ·</span><span class="ticker-item">· Adobe Illustrator ·</span><span class="ticker-item">· HTML / CSS / JS ·</span><span class="ticker-item">· After Effects ·</span><span class="ticker-item">· Video editing ·</span><span class="ticker-item">· Gebruikersonderzoek ·</span>
+    </div>
+  </div>
+</div>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">Geselecteerd werk</div>
+      <h2 class="section-title">Portfolio</h2>
+    </div>
+    <div class="work-grid">
+      <a href="hema.html" class="work-card featured reveal" style="transition-delay:.1s">
+        <div class="work-thumb">
+          <img src="images/hema-mockup.png" alt="HEMA Redesign" onerror="this.style.display='none'"/>
+          <span class="work-chip">Featured project</span>
+          <div class="work-arrow-btn">→</div>
+        </div>
+        <div class="work-info">
+          <div class="work-year">2023</div>
+          <div class="work-title">HEMA Redesign</div>
+          <div class="work-desc">Een volledige UI/UX herontwerp van de HEMA-webshop, gefocust op toegankelijkheid en conversie. Van gebruikersonderzoek tot high-fidelity prototype in Figma.</div>
+          <div class="work-tags"><span class="work-tag">UI/UX</span><span class="work-tag">Figma</span><span class="work-tag">Onderzoek</span><span class="work-tag">Prototype</span></div>
+          <div class="work-cta">Bekijk case study →</div>
+        </div>
+      </a>
+      <a href="boekenzoeker.html" class="work-card reveal" style="transition-delay:.15s">
+        <div class="work-thumb">
+          <img src="images/boekenzoeker-mockup.png" alt="Boekenzoeker" onerror="this.style.display='none'"/>
+          <span class="work-chip">App design</span>
+          <div class="work-arrow-btn">→</div>
+        </div>
+        <div class="work-info">
+          <div class="work-year">2024</div>
+          <div class="work-title">Boekenzoeker</div>
+          <div class="work-desc">App voor het ontdekken van boeken op basis van stemming en genre.</div>
+          <div class="work-tags"><span class="work-tag">Mobile UI</span><span class="work-tag">Prototype</span></div>
+          <div class="work-cta">Case study →</div>
+        </div>
+      </a>
+      <a href="traveldex.html" class="work-card reveal" style="transition-delay:.2s">
+        <div class="work-thumb">
+          <img src="images/traveldex-mockup.png" alt="Traveldex" onerror="this.style.display='none'"/>
+          <span class="work-chip">App design</span>
+          <div class="work-arrow-btn">→</div>
+        </div>
+        <div class="work-info">
+          <div class="work-year">2024</div>
+          <div class="work-title">Traveldex</div>
+          <div class="work-desc">Reisplanning app met focus op minimalistische UX.</div>
+          <div class="work-tags"><span class="work-tag">Mobile UI</span><span class="work-tag">Figma</span></div>
+          <div class="work-cta">Case study →</div>
+        </div>
+      </a>
+      <a href="jungletemple.html" class="work-card reveal" style="transition-delay:.25s">
+        <div class="work-thumb">
+          <img src="images/jungletemple-mockup.png" alt="Jungle Temple" onerror="this.style.display='none'"/>
+          <span class="work-chip">Game UI</span>
+          <div class="work-arrow-btn">→</div>
+        </div>
+        <div class="work-info">
+          <div class="work-year">2025</div>
+          <div class="work-title">Jungle Temple</div>
+          <div class="work-desc">Game interface design voor een avontuurlijk platform game.</div>
+          <div class="work-tags"><span class="work-tag">Game UI</span><span class="work-tag">Illustrator</span></div>
+          <div class="work-cta">Case study →</div>
+        </div>
+      </a>
+
+      <a href="visindustrie.html" class="work-card reveal" style="transition-delay:.3s">
+        <div class="work-thumb">
+          <img src="images/mockup-visindustrie.png" alt="De Visindustrie" onerror="this.style.display='none'"/>
+          <span class="work-chip">Interactieve website</span>
+          <div class="work-arrow-btn">→</div>
+        </div>
+        <div class="work-info">
+          <div class="work-year">2026</div>
+          <div class="work-title">De Visindustrie</div>
+          <div class="work-desc">Een interactieve website over de misstanden in de visindustrie, gebaseerd op onderzoeksjournalistiek van Follow the Money. Gebouwd met HTML, CSS en JavaScript.</div>
+          <div class="work-tags"><span class="work-tag">HTML/CSS/JS</span><span class="work-tag">Maatschappelijk</span><span class="work-tag">Interactief</span></div>
+          <div class="work-cta">Bekijk website →</div>
+        </div>
+      </a>
+
+      <a href="beeldtaal.html" class="work-card reveal" style="transition-delay:.35s">
+        <div class="work-thumb">
+          <img src="images-vid/poster-eindopdracht3.png" alt="Beeldtaal posters" onerror="this.style.display='none'"/>
+          <span class="work-chip">Beeldanalyse</span>
+          <div class="work-arrow-btn">→</div>
+        </div>
+        <div class="work-info">
+          <div class="work-year">2026</div>
+          <div class="work-title">Beeldtaal</div>
+          <div class="work-desc">Twee bewustwordingsposters ontworpen en geanalyseerd aan de hand van semiotiek, retorica en de gestaltwetten.</div>
+          <div class="work-tags"><span class="work-tag">Semiotiek</span><span class="work-tag">Retorica</span><span class="work-tag">Gestalt</span></div>
+          <div class="work-cta">Bekijk case study →</div>
+        </div>
+      </a>
+
+      <a href="aapanimatie.html" class="work-card reveal" style="transition-delay:.4s">
+        <div class="work-thumb">
+          <video class="work-clip" src="images-aap/AapAnimatie.mp4" data-clip-start="17" data-clip-end="22" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover"></video>
+          <span class="work-chip">Interactieve animatie</span>
+          <div class="work-arrow-btn">→</div>
+        </div>
+        <div class="work-info">
+          <div class="work-year">2026</div>
+          <div class="work-title">Interactieve Animatie</div>
+          <div class="work-desc">Een geanimeerd aap-karakter met drie interactieve animaties, gemaakt in Illustrator en After Effects voor het vak Interface & Beweging.</div>
+          <div class="work-tags"><span class="work-tag">Illustrator</span><span class="work-tag">After Effects</span><span class="work-tag">Animatie</span></div>
+          <div class="work-cta">Bekijk case study →</div>
+        </div>
+      </a>
+
+      <a href="goldenroast.html" class="work-card reveal" style="transition-delay:.45s">
+        <div class="work-thumb">
+          <img src="images-vid/goldenroast-homepage.jpg" alt="The Golden Roast" style="object-position:top" onerror="this.style.display='none'"/>
+          <span class="work-chip">E-commerce UI</span>
+          <div class="work-arrow-btn">→</div>
+        </div>
+        <div class="work-info">
+          <div class="work-year">2026</div>
+          <div class="work-title">The Golden Roast</div>
+          <div class="work-desc">Een rustige high-end e-commerce ervaring voor een premium koffiebranders-boutique. Conversie door rust in plaats van prikkels.</div>
+          <div class="work-tags"><span class="work-tag">Kleur & Compositie</span><span class="work-tag">Figma</span><span class="work-tag">HTML/CSS/JS</span></div>
+          <div class="work-cta">Bekijk case study →</div>
+        </div>
+      </a>
+
+      <a href="futura.html" class="work-card reveal" style="transition-delay:.5s">
+        <div class="work-thumb">
+          <img src="images-vid/futura-geometrie.png" alt="Futura letterproef" onerror="this.style.display='none'"/>
+          <span class="work-chip">Typografie</span>
+          <div class="work-arrow-btn">→</div>
+        </div>
+        <div class="work-info">
+          <div class="work-year">2026</div>
+          <div class="work-title">Show Your Face · Futura</div>
+          <div class="work-desc">Interactieve digitale letterproef voor het geometrische lettertype Futura, gebouwd in HTML en CSS.</div>
+          <div class="work-tags"><span class="work-tag">HTML/CSS</span><span class="work-tag">Typografie</span></div>
+          <div class="work-cta">Case study →</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- OVER MIJ -->
+<section id="over-mij">
+  <div class="container">
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="section-eyebrow">Over mij</div>
+        <h2 class="section-title">Wie ben ik?</h2>
+        <p class="about-statement">Ik ben Sam, <em>24 jaar</em> oud en vierdejaars CMD-student aan de HvA. Ik geloof dat goed design <em>onzichtbaar</em> is. Het werkt gewoon.</p>
+        <p class="about-body">Met een passie voor UI/UX design focus ik op het creëren van digitale ervaringen die zowel gebruiksvriendelijk als visueel aantrekkelijk zijn. Naast mijn studie zet ik me met veel energie in als delivery manager en headcoach bij PR Coaching.</p>
+        <div style="display:flex;gap:16px;margin-top:28px;flex-wrap:wrap;">
+          <a href="https://www.instagram.com/samvdhoorn" class="btn-ghost" style="font-size:12px;padding:9px 20px;">Instagram ↗</a>
+          <a href="https://www.linkedin.com/in/samvanderhoorn/" class="btn-ghost" style="font-size:12px;padding:9px 20px;">LinkedIn ↗</a>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay:.15s">
+        <div class="about-top">
+          <div class="carousel-wrap">
+            <button class="carousel-btn prev" onclick="carouselMove(-1)">‹</button>
+            <button class="carousel-btn next" onclick="carouselMove(1)">›</button>
+            <div class="carousel-track" id="carouselTrack">
+              <div class="carousel-slide"><img src="images/carousel-1.jpg" alt="Reizen"/><span class="carousel-label">Reizen</span></div>
+              <div class="carousel-slide"><img src="images/carousel-2.jpg" alt="Reizen"/><span class="carousel-label">Reizen</span></div>
+              <div class="carousel-slide"><img src="images/carousel-3.JPG" alt="Familie & vrienden"/><span class="carousel-label">Familie & vrienden</span></div>
+              <div class="carousel-slide"><img src="images/carousel-4.jpg" alt="Familie & vrienden"/><span class="carousel-label">Familie & vrienden</span></div>
+              <div class="carousel-slide"><img src="images/carousel-5.JPG" alt="Familie & vrienden"/><span class="carousel-label">Familie & vrienden</span></div>
+              <div class="carousel-slide"><img src="images/carousel-7.jpg" alt="Fitness"/><span class="carousel-label">Fitness</span></div>
+              <div class="carousel-slide"><img src="images/carousel-6.jpg" alt="Fitness"/><span class="carousel-label">Fitness</span></div>
+            </div>
+            <div class="carousel-dots" id="carouselDots"></div>
+          </div>
+          <div class="about-photo-wrap">
+            <div class="about-photo-blob">
+              <img src="images/profielfoto-sam.jpg" alt="Sam van der Hoorn" onerror="this.outerHTML='<div class=\'photo-initial\'>S</div>'"/>
+            </div>
+          </div>
+        </div>
+        <div class="about-facts">
+          <div class="fact"><div class="fact-label">Leeftijd</div><div class="fact-value">24 jaar</div></div>
+          <div class="fact"><div class="fact-label">Jaar</div><div class="fact-value">Vierdejaars</div></div>
+          <div class="fact"><div class="fact-label">Focus</div><div class="fact-value">UI/UX design</div></div>
+          <div class="fact"><div class="fact-label">Locatie</div><div class="fact-value">Amsterdam</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PR COACHING -->
+<section id="pr-coaching" class="pr-section">
+  <div class="container">
+    <div class="pr-inner">
+      <div class="reveal">
+        <div class="pr-badge"><span class="gold">●</span> Naast mijn studie</div>
+        <h2 class="pr-title">Delivery Manager<br>& Headcoach bij<br><em class="gold">PR Coaching</em></h2>
+        <p class="pr-body">PR Coaching is een online fitness coaching business gestart door vrienden van mij. Als derde persoon ben ik aangehaakt en inmiddels hebben we een team van 15 mensen met één missie: <strong style="color:var(--text)">Nederland gezonder en fitter maken</strong>. We hebben al meer dan 1000 mensen kunnen helpen richting een sterker en zelfverzekerder leven.</p>
+        <p class="pr-body" style="margin-top:14px;">Ik haal enorm veel passie uit dit werk. Als delivery manager zorg ik dat de operatie soepel loopt, als headcoach begeleid ik klanten direct op weg naar hun doelen.</p>
+        <div class="pr-stats">
+          <div class="pr-stat"><div class="pr-stat-num gold">1000+</div><div class="pr-stat-label">Mensen geholpen</div></div>
+          <div class="pr-stat"><div class="pr-stat-num gold">15</div><div class="pr-stat-label">Man team</div></div>
+          <div class="pr-stat"><div class="pr-stat-num gold">1</div><div class="pr-stat-label">Missie</div></div>
+        </div>
+        <a href="https://www.pr-onlinecoaching.nl/" class="pr-link gold" target="_blank">Bekijk PR Coaching →</a>
+      </div>
+      <div class="reveal" style="transition-delay:.15s">
+        <div class="pr-roles">
+          <div class="pr-role-card"><div class="pr-role-tag gold">Rol 01</div><div class="pr-role-title">Delivery Manager</div><div class="pr-role-desc">Ik zorg dat de operatie van PR Coaching soepel verloopt, van klantonboarding tot teambeheer. Processen stroomlijnen, schaalbaar bouwen.</div></div>
+          <div class="pr-role-card"><div class="pr-role-tag gold">Rol 02</div><div class="pr-role-title">Headcoach</div><div class="pr-role-desc">Ik begeleid klanten persoonlijk richting hun fitness- en leefstijldoelen. Trainingsschema's, voeding, mindset en het complete plaatje.</div></div>
+          <div class="pr-role-card"><div class="pr-role-tag gold">Missie</div><div class="pr-role-title">Nederland gezonder maken</div><div class="pr-role-desc">Meer dan 1000 mensen hebben we al kunnen helpen. Elke dag weer die motivatie om iemand een stap dichter bij een sterker leven te brengen.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="reveal"><div class="section-eyebrow">Wat ik kan</div><h2 class="section-title">Skills</h2></div>
+    <div class="skills-layout reveal" style="transition-delay:.05s">
+      <img src="images/skills.png" alt="Skills overzicht" class="skills-image">
+      <div class="skills-grid">
+      <div class="skill-card"><span class="skill-num">01</span><span class="skill-name">Figma</span><span class="skill-desc">Mijn sterkste tool. UI/UX design, samenwerken en prototypes gaan moeiteloos.</span><div class="skill-bar"><div class="skill-bar-inner" data-width="92"></div></div></div>
+      <div class="skill-card"><span class="skill-num">02</span><span class="skill-name">Illustrator</span><span class="skill-desc">Vlot met logo's, iconen en vectoren. Strakke, schaalbare ontwerpen.</span><div class="skill-bar"><div class="skill-bar-inner" data-width="80"></div></div></div>
+      <div class="skill-card"><span class="skill-num">03</span><span class="skill-name">Premiere Pro</span><span class="skill-desc">Videos monteren doe ik enorm graag. Ik kan goed overweg met Premiere Pro.</span><div class="skill-bar"><div class="skill-bar-inner" data-width="78"></div></div></div>
+      <div class="skill-card"><span class="skill-num">04</span><span class="skill-name">HTML / CSS / JS</span><span class="skill-desc">Met HTML en CSS bouw ik strakke layouts. JavaScript gebruik ik waar nodig.</span><div class="skill-bar"><div class="skill-bar-inner" data-width="65"></div></div></div>
+      <div class="skill-card"><span class="skill-num">05</span><span class="skill-name">After Effects</span><span class="skill-desc">Basis in animaties en motion design. Ik ontdek nog regelmatig nieuwe mogelijkheden.</span><div class="skill-bar"><div class="skill-bar-inner" data-width="55"></div></div></div>
+      <div class="skill-card"><span class="skill-num">06</span><span class="skill-name">Photoshop</span><span class="skill-desc">Handig met fotobewerking en composities voor mijn projecten.</span><div class="skill-bar"><div class="skill-bar-inner" data-width="62"></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner reveal">
+      <div>
+        <div class="section-eyebrow">Samenwerken?</div>
+        <h2 class="contact-title">Laten we<br>iets <em>moois</em><br>maken.</h2>
+        <p class="contact-sub">Open voor stages, freelance opdrachten en samenwerkingen. Ik reageer altijd snel.</p>
+        <a href="mailto:samvanderhoorn@gmail.com" class="contact-email">samvanderhoorn@gmail.com ↗</a>
+      </div>
+      <div class="contact-links">
+        <a href="https://www.instagram.com/samvdhoorn" class="contact-link">Instagram ↗</a>
+        <a href="https://www.linkedin.com/in/samvanderhoorn/" class="contact-link">LinkedIn ↗</a>
+        <a href="https://wa.me/31639024446" class="contact-link">WhatsApp ↗</a>
+        <a href="downloads/cv-sam.pdf" class="contact-link">CV downloaden ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-copy">© 2025 Sam van der Hoorn</span>
+  <nav class="footer-nav">
+    <a href="#home">Home</a><a href="#portfolio">Portfolio</a><a href="#over-mij">Over mij</a><a href="#pr-coaching">PR Coaching</a><a href="#contact">Contact</a>
+  </nav>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => { cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
+  document.querySelectorAll('a,button,.work-card,.skill-card,.pr-role-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+  const observer = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  const barObserver = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.style.width=e.target.dataset.width+'%'; }), {threshold:.3});
+  document.querySelectorAll('.skill-bar-inner').forEach(b => barObserver.observe(b));
+  let current = 0;
+  const slides = document.querySelectorAll('.carousel-slide');
+  const track = document.getElementById('carouselTrack');
+  const dotsContainer = document.getElementById('carouselDots');
+  slides.forEach((_,i) => { const dot=document.createElement('div'); dot.className='carousel-dot'+(i===0?' active':''); dot.onclick=()=>goTo(i); dotsContainer.appendChild(dot); });
+  function goTo(n) { current=(n+slides.length)%slides.length; track.style.transform=`translateX(-${current*100}%)`; document.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===current)); }
+  function carouselMove(dir) { goTo(current+dir); }
+  setInterval(()=>carouselMove(1), 3500);
+
+  document.querySelectorAll('.work-clip').forEach(v => {
+    const start = parseFloat(v.dataset.clipStart);
+    const end = parseFloat(v.dataset.clipEnd);
+    v.addEventListener('loadedmetadata', () => { v.currentTime = start; });
+    v.addEventListener('timeupdate', () => { if (v.currentTime >= end) v.currentTime = start; });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HEMA Cupcakes — Sam van der Hoorn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0a0a;--surface:#111111;--surface2:#161616;
+      --border:#1f1f1f;--border2:#2a2a2a;
+      --text:#f0ede8;--text-muted:#888888;--text-dim:#444444;
+      --accent:#c8b89a;--btn-bg:#e8e0d4;
+      --serif:'Montserrat',system-ui,sans-serif;
+      --sans:'Montserrat',system-ui,sans-serif;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .cursor{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform .15s ease,width .2s,height .2s;transform:translate(-50%,-50%)}
+    .cursor.big{width:32px;height:32px;background:transparent;border:1px solid var(--accent)}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid var(--border);background:rgba(10,10,10,0.97);backdrop-filter:blur(12px)}
+    .nav-logo img{height:32px;width:auto;display:block;filter:brightness(0) invert(1)}
+    .nav-back{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);font-weight:500;transition:color .2s}
+    .nav-back:hover{color:var(--text)}
+    .nav-cta{font-size:12px;font-weight:600;color:var(--bg);background:var(--btn-bg);padding:9px 22px;border-radius:100px;transition:opacity .2s}
+    .nav-cta:hover{opacity:.85}
+
+    /* HERO */
+    .cs-hero{min-height:85vh;padding:100px 48px 72px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+    .cs-hero-grain{position:absolute;inset:0;pointer-events:none;opacity:.6;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")}
+    .cs-eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:20px}
+    .cs-eyebrow img{height:24px;width:auto;border-radius:4px}
+    .cs-title{font-family:var(--serif);font-size:clamp(36px,4.5vw,60px);line-height:1.05;letter-spacing:-.03em;font-weight:700;opacity:0;animation:fadeUp .9s .1s forwards}
+    .cs-title em{font-style:normal;color:var(--accent)}
+    .cs-sub{font-size:14px;color:var(--text-muted);line-height:1.8;margin-top:24px;font-weight:300;max-width:420px;opacity:0;animation:fadeUp .9s .25s forwards}
+    .cs-meta{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:36px;opacity:0;animation:fadeUp .9s .4s forwards}
+    .cs-meta-item{background:var(--bg);padding:16px 20px}
+    .cs-meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-dim);margin-bottom:5px;font-weight:600}
+    .cs-meta-value{font-size:14px;font-weight:600;letter-spacing:-.01em}
+    .cs-mockup{border-radius:20px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;opacity:0;animation:fadeUp .9s .3s forwards}
+    .cs-mockup img{width:100%;height:100%;object-fit:cover}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* CONTENT */
+    .container{padding:80px 48px}
+    .cs-grid{display:grid;grid-template-columns:220px 1fr;gap:72px;align-items:start}
+    .cs-sticky{position:sticky;top:88px}
+    .cs-nav-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:16px}
+    .cs-nav-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+    .cs-nav-list a{font-size:12px;color:var(--text-muted);padding:6px 0;display:block;border-left:2px solid var(--border);padding-left:14px;transition:color .2s,border-color .2s;font-weight:500}
+    .cs-nav-list a:hover{color:var(--text);border-color:var(--accent)}
+    .cs-content{display:flex;flex-direction:column;gap:72px}
+    .cs-block-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:16px}
+    .cs-block h2{font-family:var(--serif);font-size:clamp(24px,2.5vw,36px);letter-spacing:-.02em;font-weight:700;line-height:1.15;margin-bottom:20px}
+    .cs-block p{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:300;margin-bottom:16px}
+    .cs-block p:last-child{margin-bottom:0}
+
+    .cs-img{width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);margin:28px 0;display:block}
+    .cs-img img{width:100%;height:auto;display:block}
+
+    .cs-img-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:28px 0}
+    .cs-img-2col .cs-img{margin:0}
+    .cs-screens{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+    .cs-screen-item img{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--border);cursor:zoom-in}
+    .cs-screen-label{font-size:11px;color:var(--text-dim);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:10px;text-align:center}
+    .cs-screen-desc{font-size:12px;color:var(--text-muted);font-weight:300;line-height:1.6;margin-top:6px;text-align:center}
+
+    .cs-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+    .cs-tag{font-size:10px;padding:5px 14px;border-radius:100px;border:1px solid var(--border2);color:var(--text-muted);letter-spacing:.06em;font-weight:600}
+
+    .cs-highlight{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 32px;border-left:3px solid var(--accent);margin:24px 0}
+    .cs-highlight p{font-family:var(--serif);font-size:19px;color:var(--text);line-height:1.55;letter-spacing:-.01em;font-weight:400;margin-bottom:0}
+
+    .cs-steps{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+    .cs-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+    .cs-step-num{font-size:10px;letter-spacing:.15em;color:var(--accent);font-weight:600;margin-bottom:8px}
+    .cs-step-title{font-size:14px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+    .cs-step-desc{font-size:12px;color:var(--text-muted);line-height:1.6;font-weight:300}
+
+    .cupcake-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px}
+    .cupcake-grid img{width:100%;height:auto;border-radius:12px;border:1px solid var(--border);display:block}
+
+    .cs-download-wrap{display:flex;justify-content:center;margin-top:32px}
+    .cs-download{display:inline-flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text);font-size:13px;font-weight:600;padding:14px 32px;border-radius:100px;transition:border-color .2s,background .2s}
+    .cs-download:hover{border-color:var(--accent);background:var(--surface2)}
+    .cs-download-arrow{color:var(--accent)}
+
+    /* LIGHTBOX */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:24px}
+    .lightbox.active{opacity:1;pointer-events:all}
+    .lightbox img{max-width:90vw;max-height:88vh;border-radius:12px;object-fit:contain}
+    .lightbox-close{position:fixed;top:24px;right:32px;font-size:28px;color:#fff;cursor:pointer;opacity:.7;transition:opacity .2s;z-index:9999;font-weight:300;line-height:1}
+    .lightbox-close:hover{opacity:1}
+    .zoomable{cursor:zoom-in}
+    .zoomable:hover{opacity:.9}
+
+    /* NAV NEXT/PREV */
+    .cs-nav-projects{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+    .cs-nav-proj{padding:40px 48px;display:flex;flex-direction:column;gap:8px;transition:background .2s}
+    .cs-nav-proj:hover{background:var(--surface)}
+    .cs-nav-proj:first-child{border-right:1px solid var(--border)}
+    .cs-nav-dir{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600}
+    .cs-nav-proj-title{font-family:var(--serif);font-size:22px;letter-spacing:-.02em;font-weight:700;color:var(--text);margin-top:4px}
+    .cs-nav-arrow{font-size:20px;color:var(--accent);margin-top:4px}
+
+    footer{padding:22px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
+    .footer-copy{font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500}
+
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    section{border-bottom:1px solid var(--border)}
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <a href="portfolio-sam.html" class="nav-back">← Terug naar portfolio</a>
+  <div class="nav-logo"></div>
+  <a href="portfolio-sam.html#contact" class="nav-cta">Contact →</a>
+</nav>
+
+<!-- HERO -->
+<section class="cs-hero">
+  <div class="cs-hero-grain"></div>
+  <div>
+    <div class="cs-eyebrow">
+      <img src="images-hema/hema-logo.svg" alt="HEMA"/>
+      2023 · Case study
+    </div>
+    <h1 class="cs-title">Verjaardags­cupcakes<br><em>Actiesite</em></h1>
+    <p class="cs-sub">Een interactieve actiesite voor HEMA waarbij gebruikers stap voor stap hun eigen verjaardagscupcakes samenstellen, van smaak tot decoratie, en vervolgens kunnen bestellen of ophalen.</p>
+    <div class="cs-meta">
+      <div class="cs-meta-item"><div class="cs-meta-label">Jaar</div><div class="cs-meta-value">2023</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Rol</div><div class="cs-meta-value">UI/UX Designer</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Tools</div><div class="cs-meta-value">Figma · Illustrator</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Type</div><div class="cs-meta-value">Actiesite</div></div>
+    </div>
+  </div>
+  <div class="cs-mockup">
+    <img src="images/hema-mockup.png" alt="HEMA Cupcakes mockup"/>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section>
+  <div class="container">
+    <div class="cs-grid">
+
+      <!-- STICKY NAV -->
+      <div class="cs-sticky">
+        <div class="cs-nav-label">Inhoud</div>
+        <ul class="cs-nav-list">
+          <li><a href="#context">Context</a></li>
+          <li><a href="#concept">Concept</a></li>
+          <li><a href="#schermen">De schermen</a></li>
+          <li><a href="#proces">Ontwerpproces</a></li>
+          <li><a href="#schermen-pdf">Alle schermen</a></li>
+        </ul>
+      </div>
+
+      <div class="cs-content">
+
+        <!-- 01 CONTEXT -->
+        <div class="cs-block reveal" id="context">
+          <div class="cs-block-label">01 — Context</div>
+          <h2>Een actiesite voor HEMA</h2>
+          <p>Voor dit project ontwierp ik een interactieve actiesite voor HEMA rondom het thema verjaardagscupcakes. De opdracht was om een digitale ervaring te ontwerpen die aansluit bij de speelse en toegankelijke merkidentiteit van HEMA.</p>
+          <p>De doelgroep bestaat uit mensen die een verjaardag vieren en op zoek zijn naar iets leuks en persoonlijks. De site moest laagdrempelig, visueel aantrekkelijk en intuïtief zijn, zodat ook minder digitaal vaardige gebruikers er moeiteloos doorheen navigeren.</p>
+          <div class="cs-tags">
+            <span class="cs-tag">UI/UX Design</span>
+            <span class="cs-tag">Figma</span>
+            <span class="cs-tag">Adobe Illustrator</span>
+            <span class="cs-tag">Actiesite</span>
+          </div>
+        </div>
+
+        <!-- 02 CONCEPT -->
+        <div class="cs-block reveal" id="concept">
+          <div class="cs-block-label">02 — Concept</div>
+          <h2>Cupcakes samenstellen op jouw manier</h2>
+          <div class="cs-highlight">
+            <p>"Hoe ontwerp je een digitale ervaring die het samenstellen van cupcakes net zo leuk maakt als het opeten ervan?"</p>
+          </div>
+          <p style="margin-top:20px">Het concept draait om een stap-voor-stap configurator waarbij de gebruiker volledig zelf kiest: het aantal cupcakes, de doos, de basissmaken (vanille, chocolade of red velvet), de toppings, kleuren en decoraties. Bij elke keuze krijgt de gebruiker direct visuele feedback: de cupcake verandert live mee op het scherm.</p>
+          <p>Na het samenstellen kiest de gebruiker voor bezorging of ophalen in een HEMA-vestiging. Bestellen binnen drie dagen gegarandeerd.</p>
+
+          <div class="cupcake-grid">
+            <img src="images-hema/cupcake1.jpg" alt="Cupcake 1"/>
+            <img src="images-hema/cupcake2.jpg" alt="Cupcake 2"/>
+            <img src="images-hema/cupcake3.jpg" alt="Cupcake 3"/>
+            <img src="images-hema/cupcake4.jpg" alt="Cupcake 4"/>
+          </div>
+        </div>
+
+        <!-- 03 DE SCHERMEN -->
+        <div class="cs-block reveal" id="schermen">
+          <div class="cs-block-label">03 — De schermen</div>
+          <h2>Van homepagina tot bestelling</h2>
+          <p>De site bestaat uit drie hoofdschermen die de gebruiker stap voor stap begeleiden: het homescreen, de configurator en de checkout.</p>
+
+          <div class="cs-screens">
+            <div class="cs-screen-item">
+              <img src="images-hema/hema-homescreen.png" alt="HEMA homescreen"/>
+              <div class="cs-screen-label">Homescreen</div>
+              <div class="cs-screen-desc">Inspirerende cupcakes als startpunt, met een duidelijke knop om direct te beginnen.</div>
+            </div>
+            <div class="cs-screen-item">
+              <img src="images-hema/hema-samenstellen.png" alt="HEMA samenstellen"/>
+              <div class="cs-screen-label">Samenstellen</div>
+              <div class="cs-screen-desc">Kies smaak, toppings en decoraties. De cupcake verandert live mee op het scherm.</div>
+            </div>
+            <div class="cs-screen-item">
+              <img src="images-hema/hema-bestellen.png" alt="HEMA bestellen"/>
+              <div class="cs-screen-label">Bestellen</div>
+              <div class="cs-screen-desc">Bezorging of ophalen, gegevens invullen en afronden via een overzichtelijke checkout.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 04 ONTWERPPROCES -->
+        <div class="cs-block reveal" id="proces">
+          <div class="cs-block-label">04 — Ontwerpproces</div>
+          <h2>Van schets tot hi-fi prototype</h2>
+          <p>Het proces begon met papieren schetsen om de gebruikersflow en visuele structuur te verkennen. Daarna zijn de schetsen vertaald naar een hi-fi prototype in Illustrator en Figma, waarbij meerdere iteraties zijn doorlopen.</p>
+
+          <div class="cs-steps">
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 01</div>
+              <div class="cs-step-title">Schetsen</div>
+              <div class="cs-step-desc">Papieren schetsen voor de gebruikersflow, navigatiestructuur en visuele opbouw van elke stap.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 02</div>
+              <div class="cs-step-title">Illustrator</div>
+              <div class="cs-step-desc">Visuele elementen, cupcake-illustraties en iconografie uitgewerkt in Adobe Illustrator.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 03</div>
+              <div class="cs-step-title">Hi-fi in Figma</div>
+              <div class="cs-step-desc">Schetsen omgezet naar een volledig uitgewerkt, interactief hi-fi prototype in Figma.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 04</div>
+              <div class="cs-step-title">Iteraties</div>
+              <div class="cs-step-desc">Meerdere versies doorlopen op basis van feedback, van layout tot kleurgebruik en interacties.</div>
+            </div>
+          </div>
+
+          <div class="cs-img" style="margin-top:28px">
+            <img src="images-hema/hema-schetsen.png" alt="HEMA schetsen"/>
+          </div>
+        </div>
+
+        <!-- 05 ALLE SCHERMEN -->
+        <div class="cs-block reveal" id="schermen-pdf">
+          <div class="cs-block-label">05 — Alle schermen & iteraties</div>
+          <h2>Bekijk het volledige ontwerp</h2>
+          <p>Alle schermen, tussentijdse iteraties en ontwerpkeuzes zijn gebundeld in een overzichtelijk document. Hierin is te zien hoe het ontwerp zich heeft ontwikkeld van eerste schets tot eindresultaat.</p>
+          <div class="cs-img">
+            <img src="images-hema/hema-hoofdafbeelding.png" alt="HEMA hoofdafbeelding"/>
+          </div>
+          <div class="cs-download-wrap">
+            <a href="downloads/hema-schermen-iteraties.pdf" class="cs-download" target="_blank">
+              Bekijk alle schermen en iteraties
+              <span class="cs-download-arrow">↓ PDF</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECT NAV -->
+<div class="cs-nav-projects">
+  <a href="jungletemple.html" class="cs-nav-proj">
+    <div class="cs-nav-dir">← Vorig project</div>
+    <div class="cs-nav-proj-title">Jungle Temple</div>
+    <div class="cs-nav-arrow">←</div>
+  </a>
+  <a href="boekenzoeker.html" class="cs-nav-proj" style="text-align:right">
+    <div class="cs-nav-dir">Volgend project →</div>
+    <div class="cs-nav-proj-title">Boekenzoeker</div>
+    <div class="cs-nav-arrow">→</div>
+  </a>
+</div>
+
+<footer>
+  <span class="footer-copy">© 2025 Sam van der Hoorn</span>
+  <a href="portfolio-sam.html" style="font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500">← Alle projecten</a>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lightboxClose">×</span>
+  <img id="lightboxImg" src="" alt=""/>
+</div>
+
+<script>
+  const cursor=document.getElementById('cursor');
+  document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';});
+  document.querySelectorAll('a,.cs-step,.cs-nav-proj').forEach(el=>{
+    el.addEventListener('mouseenter',()=>cursor.classList.add('big'));
+    el.addEventListener('mouseleave',()=>cursor.classList.remove('big'));
+  });
+  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  // Lightbox
+  const lb=document.getElementById('lightbox');
+  const lbImg=document.getElementById('lightboxImg');
+  const lbClose=document.getElementById('lightboxClose');
+  document.querySelectorAll('.cs-screen-item img, .cs-img img, .cs-mockup img').forEach(img=>{
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',()=>{
+      lbImg.src=img.src;
+      lb.classList.add('active');
+      document.body.style.overflow='hidden';
+    });
+  });
+  function closeLightbox(){lb.classList.remove('active');document.body.style.overflow='';}
+  lbClose.addEventListener('click',closeLightbox);
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLightbox();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+</script>
+</body>
+</html>

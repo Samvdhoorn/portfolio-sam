@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Beeldtaal — Sam van der Hoorn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0a0a;--surface:#111111;--surface2:#161616;
+      --border:#1f1f1f;--border2:#2a2a2a;
+      --text:#f0ede8;--text-muted:#888888;--text-dim:#444444;
+      --accent:#c8b89a;--btn-bg:#e8e0d4;
+      --serif:'Montserrat',system-ui,sans-serif;
+      --sans:'Montserrat',system-ui,sans-serif;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .cursor{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform .15s ease,width .2s,height .2s;transform:translate(-50%,-50%)}
+    .cursor.big{width:32px;height:32px;background:transparent;border:1px solid var(--accent)}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid var(--border);background:rgba(10,10,10,0.97);backdrop-filter:blur(12px)}
+    .nav-logo img{height:32px;width:auto;display:block;filter:brightness(0) invert(1)}
+    .nav-back{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);font-weight:500;transition:color .2s}
+    .nav-back:hover{color:var(--text)}
+    .nav-cta{font-size:12px;font-weight:600;color:var(--bg);background:var(--btn-bg);padding:9px 22px;border-radius:100px;transition:opacity .2s}
+    .nav-cta:hover{opacity:.85}
+
+    /* HERO */
+    .cs-hero{min-height:85vh;padding:100px 48px 72px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+    .cs-hero-grain{position:absolute;inset:0;pointer-events:none;opacity:.6;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")}
+    .cs-eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:20px}
+    .cs-eyebrow img{height:24px;width:auto;border-radius:4px}
+    .cs-title{font-family:var(--serif);font-size:clamp(36px,4.5vw,60px);line-height:1.05;letter-spacing:-.03em;font-weight:700;opacity:0;animation:fadeUp .9s .1s forwards}
+    .cs-title em{font-style:normal;color:var(--accent)}
+    .cs-sub{font-size:14px;color:var(--text-muted);line-height:1.8;margin-top:24px;font-weight:300;max-width:420px;opacity:0;animation:fadeUp .9s .25s forwards}
+    .cs-meta{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:36px;opacity:0;animation:fadeUp .9s .4s forwards}
+    .cs-meta-item{background:var(--bg);padding:16px 20px}
+    .cs-meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-dim);margin-bottom:5px;font-weight:600}
+    .cs-meta-value{font-size:14px;font-weight:600;letter-spacing:-.01em}
+    .cs-mockup{border-radius:20px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;opacity:0;animation:fadeUp .9s .3s forwards}
+    .cs-mockup img{width:100%;height:100%;object-fit:cover;cursor:zoom-in}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* CONTENT */
+    .container{padding:80px 48px}
+    .cs-grid{display:grid;grid-template-columns:220px 1fr;gap:72px;align-items:start}
+    .cs-sticky{position:sticky;top:88px}
+    .cs-nav-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:16px}
+    .cs-nav-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+    .cs-nav-list a{font-size:12px;color:var(--text-muted);padding:6px 0;display:block;border-left:2px solid var(--border);padding-left:14px;transition:color .2s,border-color .2s;font-weight:500}
+    .cs-nav-list a:hover{color:var(--text);border-color:var(--accent)}
+    .cs-content{display:flex;flex-direction:column;gap:72px}
+    .cs-block-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:16px}
+    .cs-block h2{font-family:var(--serif);font-size:clamp(24px,2.5vw,36px);letter-spacing:-.02em;font-weight:700;line-height:1.15;margin-bottom:20px}
+    .cs-block h3{font-family:var(--serif);font-size:19px;letter-spacing:-.01em;font-weight:700;margin:24px 0 10px}
+    .cs-block p{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:300;margin-bottom:16px}
+    .cs-block p:last-child{margin-bottom:0}
+    .cs-block ul{margin:0 0 16px 0;padding-left:20px}
+    .cs-block ul li{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:300;margin-bottom:6px}
+
+    .cs-img{width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);margin:28px 0;display:block}
+    .cs-img img{width:100%;height:auto;display:block;cursor:zoom-in}
+
+    .cs-img-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:28px 0}
+    .cs-img-2col .cs-img{margin:0}
+
+    .cs-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+    .cs-tag{font-size:10px;padding:5px 14px;border-radius:100px;border:1px solid var(--border2);color:var(--text-muted);letter-spacing:.06em;font-weight:600}
+
+    .cs-highlight{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 32px;border-left:3px solid var(--accent);margin:24px 0}
+    .cs-highlight p{font-family:var(--serif);font-size:19px;color:var(--text);line-height:1.55;letter-spacing:-.01em;font-weight:400;margin-bottom:0}
+
+    .cs-steps{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+    .cs-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+    .cs-step-num{font-size:10px;letter-spacing:.15em;color:var(--accent);font-weight:600;margin-bottom:8px}
+    .cs-step-title{font-size:14px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+    .cs-step-desc{font-size:12px;color:var(--text-muted);line-height:1.6;font-weight:300}
+
+    .cs-theory-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+    .cs-theory-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+    .cs-theory-tag{font-size:10px;letter-spacing:.15em;color:var(--accent);font-weight:600;margin-bottom:8px;text-transform:uppercase}
+    .cs-theory-title{font-size:14px;font-weight:600;margin-bottom:8px;letter-spacing:-.01em}
+    .cs-theory-desc{font-size:12px;color:var(--text-muted);line-height:1.7;font-weight:300}
+    .cs-theory-desc ul{margin:6px 0 0 16px;padding:0}
+    .cs-theory-desc li{margin-bottom:4px}
+
+    .cs-divider{display:flex;align-items:center;gap:16px;margin:8px 0 0}
+    .cs-divider-line{flex:1;height:1px;background:var(--border)}
+    .cs-divider-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600;white-space:nowrap}
+
+    .cs-assignment{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin:20px 0}
+    .cs-assignment-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:10px}
+    .cs-assignment p{font-size:13px;color:var(--text-muted);line-height:1.8;font-weight:300;margin-bottom:10px}
+    .cs-assignment p:last-child{margin-bottom:0}
+
+    /* LIGHTBOX */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:24px}
+    .lightbox.active{opacity:1;pointer-events:all}
+    .lightbox img{max-width:90vw;max-height:88vh;border-radius:12px;object-fit:contain}
+    .lightbox-close{position:fixed;top:24px;right:32px;font-size:28px;color:#fff;cursor:pointer;opacity:.7;transition:opacity .2s;z-index:9999;font-weight:300;line-height:1}
+    .lightbox-close:hover{opacity:1}
+    .zoomable{cursor:zoom-in}
+    .zoomable:hover{opacity:.9}
+
+    /* NAV NEXT/PREV */
+    .cs-nav-projects{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+    .cs-nav-proj{padding:40px 48px;display:flex;flex-direction:column;gap:8px;transition:background .2s}
+    .cs-nav-proj:hover{background:var(--surface)}
+    .cs-nav-proj:first-child{border-right:1px solid var(--border)}
+    .cs-nav-dir{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600}
+    .cs-nav-proj-title{font-family:var(--serif);font-size:22px;letter-spacing:-.02em;font-weight:700;color:var(--text);margin-top:4px}
+    .cs-nav-arrow{font-size:20px;color:var(--accent);margin-top:4px}
+
+    footer{padding:22px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
+    .footer-copy{font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500}
+
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    section{border-bottom:1px solid var(--border)}
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <a href="portfolio-sam.html" class="nav-back">← Terug naar portfolio</a>
+  <div class="nav-logo"></div>
+  <a href="portfolio-sam.html#contact" class="nav-cta">Contact →</a>
+</nav>
+
+<!-- HERO -->
+<section class="cs-hero">
+  <div class="cs-hero-grain"></div>
+  <div>
+    <div class="cs-eyebrow">2026 · Vak: Beeldtaal</div>
+    <h1 class="cs-title">Beeldtaal<br><em>Semiotiek, retorica & gestalt</em></h1>
+    <p class="cs-sub">Twee opdrachten waarin ik visuele communicatie analyseerde en zelf ontwierp aan de hand van semiotiek, retorica en de gestaltwetten: een overtuigender variant op een bestaande WWF-tijgercampagne, en een eigen bewustwordingsposter voor het Wereld Natuur Fonds.</p>
+    <div class="cs-meta">
+      <div class="cs-meta-item"><div class="cs-meta-label">Jaar</div><div class="cs-meta-value">2026</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Rol</div><div class="cs-meta-value">Concept & Ontwerp</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Tools</div><div class="cs-meta-value">Photoshop · AI-beeldgeneratie</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Type</div><div class="cs-meta-value">Beeldanalyse & poster</div></div>
+    </div>
+  </div>
+  <div class="cs-mockup">
+    <img src="images-vid/poster-eindopdracht3.png" alt="WWF poster eindopdracht"/>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section>
+  <div class="container">
+    <div class="cs-grid">
+
+      <!-- STICKY NAV -->
+      <div class="cs-sticky">
+        <div class="cs-nav-label">Inhoud</div>
+        <ul class="cs-nav-list">
+          <li><a href="#context">Context</a></li>
+          <li><a href="#tijger">Opdracht: tijger</a></li>
+          <li><a href="#olifant-opdracht">Opdracht: olifant</a></li>
+          <li><a href="#semiotiek">Semiotiek</a></li>
+          <li><a href="#retorica">Retorische analyse</a></li>
+          <li><a href="#vormgeving">Vormgeving & gestalt</a></li>
+          <li><a href="#feedback">Feedback & iteratie</a></li>
+          <li><a href="#reflectie">Reflectie</a></li>
+        </ul>
+      </div>
+
+      <div class="cs-content">
+
+        <!-- 01 CONTEXT -->
+        <div class="cs-block reveal" id="context">
+          <div class="cs-block-label">01 — Context</div>
+          <h2>Beeldtaal: leren zien wat een beeld doet</h2>
+          <p>Bij het vak Beeldtaal onderzochten we hoe visuele communicatie betekenis en overtuigingskracht opbouwt. De theorie kwam uit drie hoeken: semiotiek (tekens en betekenis), retorica (ethos, pathos, logos, kairos en stijlfiguren) en de gestaltwetten (hoe het oog en brein een beeld organiseren).</p>
+          <p>Deze theorie werd toegepast in twee opdrachten: eerst het analyseren en overtuigender maken van een bestaande bewustwordingscampagne, en daarna het zelf ontwerpen van een volledig nieuwe poster vanuit dezelfde theoretische basis.</p>
+          <div class="cs-tags">
+            <span class="cs-tag">Semiotiek</span>
+            <span class="cs-tag">Retorica</span>
+            <span class="cs-tag">Gestaltwetten</span>
+            <span class="cs-tag">Beeldanalyse</span>
+          </div>
+        </div>
+
+        <!-- 02 TIJGER -->
+        <div class="cs-block reveal" id="tijger">
+          <div class="cs-block-label">02 — Opdracht dag 2 · Visuele Retorica</div>
+          <h2>Een bestaande campagne overtuigender maken</h2>
+          <div class="cs-assignment">
+            <div class="cs-assignment-label">De opdracht</div>
+            <p>Zoek een bestaande visual van een bewustwordingscampagne, maak een retorische analyse, benoem de gebruikte gestaltwetten en de indexicale tekens. Maak vervolgens een eigen, overtuigender variant op de visual en onderbouw de gemaakte keuzes.</p>
+          </div>
+          <p>Ik koos een bestaande WWF-campagne over de tijger als uitgangspunt. Het origineel waarschuwt voor het uitsterven van de tijger door stroperij: <em style="font-style:normal;color:var(--text)">"I am not a rug."</em> Met als feit dat er nog maar 3.200 wilde tijgers over zijn, en stroperij voor huiden, botten en andere onderdelen de grootste directe dreiging vormt voor hun overleving.</p>
+          <p>Op basis van de retorische analyse, de gestaltwetten en de indexicale tekens uit het origineel heb ik een eigen, overtuigender versie gemaakt. Het contrast tussen het levende dier in de natuur en de tekst "I am not a rug" versterkt de boodschap: de tijger is geen object of decoratie, maar een levend wezen dat met uitsterven wordt bedreigd.</p>
+          <div class="cs-img">
+            <img src="images-vid/tijger2.png" alt="Tijger poster, eigen overtuigender variant"/>
+          </div>
+        </div>
+
+        <!-- 03 OLIFANT OPDRACHT -->
+        <div class="cs-block reveal" id="olifant-opdracht">
+          <div class="cs-block-label">03 — Eindopdracht</div>
+          <h2>Een eigen bewustwordingsposter voor het WWF</h2>
+          <div class="cs-assignment">
+            <div class="cs-assignment-label">De opdracht</div>
+            <p>Maak een ethisch verantwoorde poster voor een bewustwordings- of reclamecampagne voor een specifieke doelgroep. Pas elementen uit semiotiek, retorica en gestalt toe en onderbouw met welk doel je de verschillende elementen hebt gebruikt.</p>
+            <p>Als inspiratiebron bezochten we het Wereldmuseum in Amsterdam en de tentoonstelling "Things That Matter", waarna we zelf een onderwerp kozen om bewustwording rond te creëren.</p>
+          </div>
+          <p>Ik koos verstedelijking en het verdwijnen van natuurlijke leefgebieden als onderwerp, met de olifant als symbool voor de dieren die hierdoor steeds minder ruimte overhouden. De poster richt zich op een breed publiek, met een focus op beleidsmakers en mensen die verstedelijking en milieu een warm hart toedragen.</p>
+          <div class="cs-highlight">
+            <p>"Geen ruimte meer. Geen toekomst."</p>
+          </div>
+          <p style="margin-top:20px">De poster toont een olifant die eenzaam op een klein eilandje van gras staat, omringd door een verwoeste, verstedelijkte omgeving. Het beeld symboliseert hoe leefgebieden steeds verder krimpen door menselijke uitbreiding, en hoe afhankelijk de natuur is geworden van een eindige, kwetsbare ruimte.</p>
+          <div class="cs-img">
+            <img src="images-vid/poster-eindopdracht3.png" alt="WWF poster, eindversie"/>
+          </div>
+        </div>
+
+        <!-- 04 SEMIOTIEK -->
+        <div class="cs-block reveal" id="semiotiek">
+          <div class="cs-block-label">04 — Semiotiek & indexicale tekens</div>
+          <h2>Wat de olifant en het grasveld betekenen</h2>
+          <p>Het belangrijkste indexicale teken in de poster is de olifant die eenzaam op het kale stukje gras staat. Dit verwijst naar:</p>
+          <ul>
+            <li>het krimpen van leefgebieden door verstedelijking</li>
+            <li>de verdringing van wilde dieren door menselijke uitbreiding</li>
+            <li>de afhankelijkheid van een eindige natuurlijke omgeving</li>
+          </ul>
+          <p>Het grasveld is klein en geïsoleerd, wat de kwetsbare situatie van de natuur symboliseert. Daarnaast functioneert ook de verwoeste, stedelijke achtergrond als index voor de groeiende verstedelijking en het verlies van natuurlijk leefgebied.</p>
+        </div>
+
+        <!-- 05 RETORICA -->
+        <div class="cs-block reveal" id="retorica">
+          <div class="cs-block-label">05 — Retorische analyse</div>
+          <h2>Ethos, pathos, logos & kairos</h2>
+          <div class="cs-theory-grid">
+            <div class="cs-theory-card">
+              <div class="cs-theory-tag">Ethos</div>
+              <div class="cs-theory-desc">De geloofwaardigheid komt voort uit de aanwezigheid van het WWF-logo, een organisatie die wereldwijd bekend staat als betrouwbare bron op het gebied van natuurbehoud.</div>
+            </div>
+            <div class="cs-theory-card">
+              <div class="cs-theory-tag">Pathos</div>
+              <div class="cs-theory-desc">De poster speelt sterk in op emotie:
+                <ul>
+                  <li>de eenzame olifant roept mededogen op</li>
+                  <li>het contrast tussen de grijze, verwoeste stad en het kleine groene stukje natuur versterkt het gevoel van verlies</li>
+                  <li>de tekst "De stad groeit, de natuur verdwijnt" vergroot het gevoel van urgentie</li>
+                </ul>
+              </div>
+            </div>
+            <div class="cs-theory-card">
+              <div class="cs-theory-tag">Logos</div>
+              <div class="cs-theory-desc">De ratio wordt aangesproken via de tekst die direct stelt dat groei van de stad leidt tot het verdwijnen van de natuur: een logische, feitelijke claim die aansluit bij de klimaatproblematiek.</div>
+            </div>
+            <div class="cs-theory-card">
+              <div class="cs-theory-tag">Kairos</div>
+              <div class="cs-theory-desc">De poster sluit aan op het huidige tijdsgewricht, waarin verstedelijking en klimaatverandering hoog op de maatschappelijke agenda staan.</div>
+            </div>
+          </div>
+
+          <h3>Stijlfiguren</h3>
+          <p><strong style="color:var(--text);font-weight:600">Schema's</strong> — Repetitio: "Geen ... Geen ..." versterkt de impact. Climax: opbouw van een algemene boodschap naar een concrete claim. Verba-pictura: tekst en beeld werken samen om dezelfde boodschap te versterken.</p>
+        </div>
+
+        <!-- 06 VORMGEVING & GESTALT -->
+        <div class="cs-block reveal" id="vormgeving">
+          <div class="cs-block-label">06 — Vormgeving, framing & gestalt</div>
+          <h2>Compositie en de gestaltwetten</h2>
+          <p>De compositie is symmetrisch opgebouwd met de olifant in het midden als focuspunt. De grauwe, koude kleuren en sfeer van de stad versterken het verlatingsgevoel, en contrasteren met de levendige groene plek onder de olifant.</p>
+
+          <h3>Framing</h3>
+          <ul>
+            <li><strong style="color:var(--text);font-weight:600">Selectie:</strong> alleen relevante elementen zoals de olifant en de stad zijn in beeld</li>
+            <li><strong style="color:var(--text);font-weight:600">Focaal punt:</strong> de olifant met het grasveld staat scherp in beeld</li>
+            <li><strong style="color:var(--text);font-weight:600">Positionering:</strong> de olifant staat in het midden, omringd door grijze chaos</li>
+            <li><strong style="color:var(--text);font-weight:600">Spin:</strong> een serieuze, urgentie uitstralende beeldtaal en sfeer</li>
+          </ul>
+
+          <h3>Gestaltprincipes</h3>
+          <ul>
+            <li><strong style="color:var(--text);font-weight:600">Figuur-achtergrond:</strong> de olifant is duidelijk te zien als figuur, de stad als achtergrond</li>
+            <li><strong style="color:var(--text);font-weight:600">Proximiteit:</strong> visuele elementen worden gegroepeerd</li>
+            <li><strong style="color:var(--text);font-weight:600">Continuïteit:</strong> lijnen in de compositie leiden het oog naar het natuurlijke element</li>
+            <li><strong style="color:var(--text);font-weight:600">Sluiting:</strong> het brein vult de chaos van de stad aan tot een geheel</li>
+          </ul>
+        </div>
+
+        <!-- 07 FEEDBACK & ITERATIE -->
+        <div class="cs-block reveal" id="feedback">
+          <div class="cs-block-label">07 — Feedback & iteratie</div>
+          <h2>Van eerste versie naar eindresultaat</h2>
+          <p>Na feedback van medestudenten en de coach zijn er twee concrete verbeteringen doorgevoerd: een spelfout is weggewerkt en het kleurcontrast van de tekst is verbeterd voor betere leesbaarheid tegen de donkere achtergrond.</p>
+          <div class="cs-divider">
+            <div class="cs-divider-line"></div>
+            <div class="cs-divider-label">Bronnen beeldmateriaal</div>
+            <div class="cs-divider-line"></div>
+          </div>
+          <p style="margin-top:16px">Olifant: stockfoto via Adobe Stock. Achtergrond stad en grasveld: gegenereerd met ChatGPT, op basis van prompts gericht op een apocalyptisch, verstedelijkt straatbeeld en een geïsoleerd stukje gras met zichtbare grond en wortels. WWF-logo: officieel merkmateriaal.</p>
+        </div>
+
+        <!-- 08 REFLECTIE -->
+        <div class="cs-block reveal" id="reflectie">
+          <div class="cs-block-label">08 — Reflectie & conclusie</div>
+          <h2>Wat deze opdrachten me leerden</h2>
+          <p>In deze opdrachten heb ik geleerd hoe beeldtaal gebruikt kan worden om een sterke boodschap over te brengen zonder veel tekst. Door gebruik te maken van symbolische elementen en sterke visuele contrasten kon ik de boodschap krachtig overbrengen, zonder dat een uitgebreide toelichting nodig is.</p>
+          <p>De poster maakt bewust gebruik van semiotiek, retorica en gestaltprincipes om een krachtige en urgente boodschap over te brengen aan een breed publiek.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECT NAV -->
+<div class="cs-nav-projects">
+  <a href="visindustrie.html" class="cs-nav-proj">
+    <div class="cs-nav-dir">← Vorig project</div>
+    <div class="cs-nav-proj-title">De Visindustrie</div>
+    <div class="cs-nav-arrow">←</div>
+  </a>
+  <a href="aapanimatie.html" class="cs-nav-proj" style="text-align:right">
+    <div class="cs-nav-dir">Volgend project →</div>
+    <div class="cs-nav-proj-title">Interactieve Animatie</div>
+    <div class="cs-nav-arrow">→</div>
+  </a>
+</div>
+
+<footer>
+  <span class="footer-copy">© 2026 Sam van der Hoorn</span>
+  <a href="portfolio-sam.html" style="font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500">← Alle projecten</a>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lightboxClose">×</span>
+  <img id="lightboxImg" src="" alt=""/>
+</div>
+
+<script>
+  const cursor=document.getElementById('cursor');
+  document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';});
+  document.querySelectorAll('a,.cs-step,.cs-nav-proj').forEach(el=>{
+    el.addEventListener('mouseenter',()=>cursor.classList.add('big'));
+    el.addEventListener('mouseleave',()=>cursor.classList.remove('big'));
+  });
+  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  // Lightbox
+  const lb=document.getElementById('lightbox');
+  const lbImg=document.getElementById('lightboxImg');
+  const lbClose=document.getElementById('lightboxClose');
+  document.querySelectorAll('.cs-img img, .cs-mockup img').forEach(img=>{
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',()=>{
+      lbImg.src=img.src;
+      lb.classList.add('active');
+      document.body.style.overflow='hidden';
+    });
+  });
+  function closeLightbox(){lb.classList.remove('active');document.body.style.overflow='';}
+  lbClose.addEventListener('click',closeLightbox);
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLightbox();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+</script>
+</body>
+</html>

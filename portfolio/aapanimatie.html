@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactieve Animatie — Sam van der Hoorn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0a0a;--surface:#111111;--surface2:#161616;
+      --border:#1f1f1f;--border2:#2a2a2a;
+      --text:#f0ede8;--text-muted:#888888;--text-dim:#444444;
+      --accent:#c8b89a;--btn-bg:#e8e0d4;
+      --serif:'Montserrat',system-ui,sans-serif;
+      --sans:'Montserrat',system-ui,sans-serif;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .cursor{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform .15s ease,width .2s,height .2s;transform:translate(-50%,-50%)}
+    .cursor.big{width:32px;height:32px;background:transparent;border:1px solid var(--accent)}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid var(--border);background:rgba(10,10,10,0.97);backdrop-filter:blur(12px)}
+    .nav-logo img{height:32px;width:auto;display:block;filter:brightness(0) invert(1)}
+    .nav-back{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);font-weight:500;transition:color .2s}
+    .nav-back:hover{color:var(--text)}
+    .nav-cta{font-size:12px;font-weight:600;color:var(--bg);background:var(--btn-bg);padding:9px 22px;border-radius:100px;transition:opacity .2s}
+    .nav-cta:hover{opacity:.85}
+
+    /* HERO */
+    .cs-hero{min-height:85vh;padding:100px 48px 72px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+    .cs-hero-grain{position:absolute;inset:0;pointer-events:none;opacity:.6;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")}
+    .cs-eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:20px}
+    .cs-title{font-family:var(--serif);font-size:clamp(36px,4.5vw,60px);line-height:1.05;letter-spacing:-.03em;font-weight:700;opacity:0;animation:fadeUp .9s .1s forwards}
+    .cs-title em{font-style:normal;color:var(--accent)}
+    .cs-sub{font-size:14px;color:var(--text-muted);line-height:1.8;margin-top:24px;font-weight:300;max-width:420px;opacity:0;animation:fadeUp .9s .25s forwards}
+    .cs-meta{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:36px;opacity:0;animation:fadeUp .9s .4s forwards}
+    .cs-meta-item{background:var(--bg);padding:16px 20px}
+    .cs-meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-dim);margin-bottom:5px;font-weight:600}
+    .cs-meta-value{font-size:14px;font-weight:600;letter-spacing:-.01em}
+    .cs-mockup{border-radius:20px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;opacity:0;animation:fadeUp .9s .3s forwards}
+    .cs-mockup video{width:100%;height:100%;object-fit:cover;display:block}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* CONTENT */
+    .container{padding:80px 48px}
+    .cs-grid{display:grid;grid-template-columns:220px 1fr;gap:72px;align-items:start}
+    .cs-sticky{position:sticky;top:88px}
+    .cs-nav-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:16px}
+    .cs-nav-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+    .cs-nav-list a{font-size:12px;color:var(--text-muted);padding:6px 0;display:block;border-left:2px solid var(--border);padding-left:14px;transition:color .2s,border-color .2s;font-weight:500}
+    .cs-nav-list a:hover{color:var(--text);border-color:var(--accent)}
+    .cs-content{display:flex;flex-direction:column;gap:72px}
+    .cs-block-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:16px}
+    .cs-block h2{font-family:var(--serif);font-size:clamp(24px,2.5vw,36px);letter-spacing:-.02em;font-weight:700;line-height:1.15;margin-bottom:20px}
+    .cs-block h3{font-family:var(--serif);font-size:19px;letter-spacing:-.01em;font-weight:700;margin:24px 0 10px}
+    .cs-block p{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:300;margin-bottom:16px}
+    .cs-block p:last-child{margin-bottom:0}
+    .cs-block ul{margin:0 0 16px 0;padding-left:20px}
+    .cs-block ul li{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:300;margin-bottom:6px}
+
+    .cs-img{width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);margin:28px 0;display:block}
+    .cs-img img{width:100%;height:auto;display:block;cursor:zoom-in}
+
+    .cs-video-wrap{width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);margin:28px 0}
+    .cs-video-wrap video{width:100%;height:auto;display:block}
+
+    .cs-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+    .cs-tag{font-size:10px;padding:5px 14px;border-radius:100px;border:1px solid var(--border2);color:var(--text-muted);letter-spacing:.06em;font-weight:600}
+
+    .cs-highlight{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 32px;border-left:3px solid var(--accent);margin:24px 0}
+    .cs-highlight p{font-family:var(--serif);font-size:19px;color:var(--text);line-height:1.55;letter-spacing:-.01em;font-weight:400;margin-bottom:0}
+
+    .cs-steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:24px}
+    .cs-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+    .cs-step-num{font-size:10px;letter-spacing:.15em;color:var(--accent);font-weight:600;margin-bottom:8px}
+    .cs-step-title{font-size:14px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+    .cs-step-desc{font-size:12px;color:var(--text-muted);line-height:1.6;font-weight:300}
+
+    .cs-buttons-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:24px}
+    .cs-btn-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;text-align:center}
+    .cs-btn-icon{font-size:26px;margin-bottom:10px}
+    .cs-btn-title{font-size:13px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+    .cs-btn-desc{font-size:12px;color:var(--text-muted);line-height:1.6;font-weight:300}
+
+    .cs-sound-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+    .cs-sound-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+    .cs-sound-tag{font-size:10px;letter-spacing:.15em;color:var(--accent);font-weight:600;margin-bottom:6px;text-transform:uppercase}
+    .cs-sound-desc{font-size:12px;color:var(--text-muted);line-height:1.7;font-weight:300}
+
+    .cs-divider{display:flex;align-items:center;gap:16px;margin:8px 0 0}
+    .cs-divider-line{flex:1;height:1px;background:var(--border)}
+    .cs-divider-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600;white-space:nowrap}
+
+    .cs-download-wrap{display:flex;justify-content:center;margin-top:32px}
+    .cs-download{display:inline-flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text);font-size:13px;font-weight:600;padding:14px 32px;border-radius:100px;transition:border-color .2s,background .2s}
+    .cs-download:hover{border-color:var(--accent);background:var(--surface2)}
+    .cs-download-arrow{color:var(--accent)}
+
+    /* LIGHTBOX */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:24px}
+    .lightbox.active{opacity:1;pointer-events:all}
+    .lightbox img{max-width:90vw;max-height:88vh;border-radius:12px;object-fit:contain}
+    .lightbox-close{position:fixed;top:24px;right:32px;font-size:28px;color:#fff;cursor:pointer;opacity:.7;transition:opacity .2s;z-index:9999;font-weight:300;line-height:1}
+    .lightbox-close:hover{opacity:1}
+
+    /* NAV NEXT/PREV */
+    .cs-nav-projects{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+    .cs-nav-proj{padding:40px 48px;display:flex;flex-direction:column;gap:8px;transition:background .2s}
+    .cs-nav-proj:hover{background:var(--surface)}
+    .cs-nav-proj:first-child{border-right:1px solid var(--border)}
+    .cs-nav-dir{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600}
+    .cs-nav-proj-title{font-family:var(--serif);font-size:22px;letter-spacing:-.02em;font-weight:700;color:var(--text);margin-top:4px}
+    .cs-nav-arrow{font-size:20px;color:var(--accent);margin-top:4px}
+
+    footer{padding:22px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
+    .footer-copy{font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500}
+
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    section{border-bottom:1px solid var(--border)}
+
+    @media (max-width:900px){
+      .cs-steps,.cs-buttons-grid,.cs-sound-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <a href="portfolio-sam.html" class="nav-back">← Terug naar portfolio</a>
+  <div class="nav-logo"></div>
+  <a href="portfolio-sam.html#contact" class="nav-cta">Contact →</a>
+</nav>
+
+<!-- HERO -->
+<section class="cs-hero">
+  <div class="cs-hero-grain"></div>
+  <div>
+    <div class="cs-eyebrow">2026 · Vak: Interface & Beweging</div>
+    <h1 class="cs-title">Interactieve Animatie<br><em>Karakter & beweging</em></h1>
+    <p class="cs-sub">Een speels geanimeerd aap-karakter met drie verschillende animaties, gemaakt in Illustrator en After Effects, gekoppeld aan interactieve interface-knoppen en geluid.</p>
+    <div class="cs-meta">
+      <div class="cs-meta-item"><div class="cs-meta-label">Jaar</div><div class="cs-meta-value">2026</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Rol</div><div class="cs-meta-value">Concept, illustratie & animatie</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Tools</div><div class="cs-meta-value">Illustrator · After Effects</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Type</div><div class="cs-meta-value">Character animatie</div></div>
+    </div>
+  </div>
+  <div class="cs-mockup">
+    <video src="images-aap/AapAnimatie.mp4" controls muted loop playsinline></video>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section>
+  <div class="container">
+    <div class="cs-grid">
+
+      <!-- STICKY NAV -->
+      <div class="cs-sticky">
+        <div class="cs-nav-label">Inhoud</div>
+        <ul class="cs-nav-list">
+          <li><a href="#context">Context</a></li>
+          <li><a href="#karakter">Karakterontwerp</a></li>
+          <li><a href="#storyboard">Storyboard</a></li>
+          <li><a href="#icons">Moving icons</a></li>
+          <li><a href="#onderzoek">Technisch onderzoek</a></li>
+          <li><a href="#eindproduct">Eindproduct</a></li>
+          <li><a href="#geluid">Geluid</a></li>
+          <li><a href="#reflectie">Reflectie</a></li>
+        </ul>
+      </div>
+
+      <div class="cs-content">
+
+        <!-- 01 CONTEXT -->
+        <div class="cs-block reveal" id="context">
+          <div class="cs-block-label">01 — Context</div>
+          <h2>Beweging als ontwerpmiddel</h2>
+          <p>Voor het vak Interface & Beweging maakte ik een karakteranimatie waarmee ik leerde hoe animatie de uitstraling en interactie van een interface kan versterken. Het doel was een simpel, herkenbaar karakter te ontwerpen dat met meerdere losse animaties tot leven kon worden gebracht.</p>
+          <p>Ik begon met het idee om een eenvoudig karakter te maken dat makkelijk te animeren is, maar toch genoeg persoonlijkheid heeft. Daarom ben ik gaan schetsen met verschillende dieren, zoals een kat, een hond en een aap.</p>
+          <div class="cs-tags">
+            <span class="cs-tag">Illustrator</span>
+            <span class="cs-tag">After Effects</span>
+            <span class="cs-tag">Character animatie</span>
+            <span class="cs-tag">Interactie</span>
+          </div>
+        </div>
+
+        <!-- 02 KARAKTERONTWERP -->
+        <div class="cs-block reveal" id="karakter">
+          <div class="cs-block-label">02 — Karakterontwerp</div>
+          <h2>Waarom een aap</h2>
+          <p>Uiteindelijk koos ik voor de aap, omdat die speels is en goed past bij grappige en dynamische bewegingen. Ook heeft een aap een meer menselijke postuur, wat fijner animeren leek. Ik gaf hem een eigen accessoire: een fitted cap, om hem net wat meer "swag" te geven.</p>
+          <p>Het karakter is in Illustrator opgebouwd in losse onderdelen (armen, benen, hoofd, torso), zodat elk onderdeel later apart geanimeerd kon worden in After Effects.</p>
+          <div class="cs-highlight">
+            <p>"Ik kwam in flow state en had al gauw mijn aap helemaal af, ik kon beginnen aan mijn animatie."</p>
+          </div>
+        </div>
+
+        <!-- 03 STORYBOARD -->
+        <div class="cs-block reveal" id="storyboard">
+          <div class="cs-block-label">03 — Storyboard & research</div>
+          <h2>Drie animaties, één karakter</h2>
+          <p>Ik merkte dat ik het leuk vond om te spelen met beweging door middel van soms onrealistische acties. Daarom bedacht ik drie verschillende animaties die elk een andere kant van het karakter laten zien, terwijl het geheel toch één stijl en idee blijft. Voor elke animatie maakte ik een simpel storyboard om de beweging en timing te bepalen.</p>
+
+          <div class="cs-steps">
+            <div class="cs-step">
+              <div class="cs-step-num">Animatie 01</div>
+              <div class="cs-step-title">Zwevende banaan</div>
+              <div class="cs-step-desc">De aap staat stil met de banaan in zijn hand. Zijn arm beweegt omhoog, de banaan komt los en zweeft subtiel op en neer voor een magisch effect.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Animatie 02</div>
+              <div class="cs-step-title">Banaan als sigaret</div>
+              <div class="cs-step-desc">De aap houdt de banaan bij zijn mond alsof hij gaat roken, neemt een trekje en blaast rook uit: een grappige, absurde twist.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Animatie 03</div>
+              <div class="cs-step-title">Backflip</div>
+              <div class="cs-step-desc">De aap zakt door zijn knieën, springt omhoog, draait door de lucht en landt weer op zijn voeten. Focus op snelheid, timing en vloeiende rotatie.</div>
+            </div>
+          </div>
+          <p style="margin-top:20px">Voor de actiepose tijdens de backflip heb ik een referentiefoto van mijn eigen pet door Google Gemini laten omzetten naar een geschikte houding. Ik keek daarnaast naar referenties van simpele character animaties en GIFs om een gevoel te krijgen voor timing en poses.</p>
+        </div>
+
+        <!-- 04 MOVING ICONS -->
+        <div class="cs-block reveal" id="icons">
+          <div class="cs-block-label">04 — 3 moving icons</div>
+          <h2>Details die de animatie ondersteunen</h2>
+          <p>Naast het hoofdkarakter werkte ik met meerdere "moving icons" die elk een onderdeel van de animaties ondersteunen en versterken. De banaan speelt een centrale rol: hij zweeft in de lucht voor een magisch effect, en wordt later gebruikt als "sigaret", met een opbrandend vonkje dat kort oplicht bij het nemen van een trekje.</p>
+          <p>Daarnaast gebruikte ik een zippo-aansteker met een losse vlam die kort verschijnt bij het openen, voor extra actie en detail. Wanneer het poppetje een trekje van de "sigaret" neemt, blaast hij ook rook uit. Ook de pet van de aap beweegt subtiel mee tijdens de animaties: een vorm van secondary motion, waardoor de beweging minder stijf aanvoelt en natuurlijker oogt.</p>
+          <div class="cs-tags">
+            <span class="cs-tag">Zwevende banaan</span>
+            <span class="cs-tag">Zippo + vlam</span>
+            <span class="cs-tag">Rook</span>
+            <span class="cs-tag">Secondary motion (pet)</span>
+          </div>
+        </div>
+
+        <!-- 05 TECHNISCH ONDERZOEK -->
+        <div class="cs-block reveal" id="onderzoek">
+          <div class="cs-block-label">05 — Technisch onderzoek</div>
+          <h2>Rigging, parenting & easing</h2>
+          <p>Omdat ik nog weinig ervaring had met After Effects, heb ik veel tutorials gebruikt om de basis te leren: werken met keyframes, rotaties, timing en verschillende bewegingen binnen losse layers.</p>
+          <p>Voor het animeren van het karakter deed ik onderzoek naar character animation in After Effects, met name rigging, parenting en het animeren van losse body parts. Door gebruik te maken van parenting kon ik bewegingen realistischer maken, zoals bij de backflip. Daarnaast onderzocht ik easing (ease in / ease out), zodat bewegingen vloeiender en minder stijf aanvoelen. Voor de zwevende banaan keek ik naar simpele loop-animaties en position keyframes om een zwevend effect te creëren.</p>
+          <p>De achtergrond is een simpele jungle-omgeving, met warme kleuren, verschillende lagen bomen en een zonsondergang voor diepte en sfeer, bewust rustig gehouden zodat de aandacht bij de animaties van de aap blijft.</p>
+        </div>
+
+        <!-- 06 EINDPRODUCT -->
+        <div class="cs-block reveal" id="eindproduct">
+          <div class="cs-block-label">06 — Eindproduct</div>
+          <h2>Drie interactieve knoppen</h2>
+          <p>Ik ontwierp drie interactieve knoppen die elk gekoppeld zijn aan een andere animatie van de aap. Door gebruik te maken van duidelijke iconen en kleur blijft de interface overzichtelijk en tegelijkertijd speels.</p>
+
+          <div class="cs-buttons-grid">
+            <div class="cs-btn-card">
+              <div class="cs-btn-title">Toverstaf knop</div>
+              <div class="cs-btn-desc">Start de animatie waarbij de aap de banaan laat zweven, omdat een toverstaf nog meer aantoont dat de banaan op magische wijze zweeft.</div>
+            </div>
+            <div class="cs-btn-card">
+              <div class="cs-btn-title">Aansteker + banaan knop</div>
+              <div class="cs-btn-desc">Start de animatie waarin de aap de banaan als sigaret gebruikt. De aansteker en vlam verwijzen direct naar de actie.</div>
+            </div>
+            <div class="cs-btn-card">
+              <div class="cs-btn-title">Rotatie knop</div>
+              <div class="cs-btn-desc">Start de backflip-animatie van de aap. De pijlen visualiseren de draaiende beweging van de flip.</div>
+            </div>
+          </div>
+
+          <div class="cs-video-wrap" style="margin-top:28px">
+            <video src="images-aap/AapAnimatie.mp4" controls muted loop playsinline></video>
+          </div>
+          <div class="cs-download-wrap">
+            <a href="images-aap/AapAnimatie.mp4" class="cs-download" target="_blank" download>
+              Download de volledige animatie
+              <span class="cs-download-arrow">↓ MP4</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 07 GELUID -->
+        <div class="cs-block reveal" id="geluid">
+          <div class="cs-block-label">07 — Geluid</div>
+          <h2>Geluid als versterking van beweging</h2>
+          <p>Bij de animaties heb ik ook geluid toegevoegd om de bewegingen sterker en levendiger te maken. De geluidseffecten zorgen ervoor dat de acties duidelijker aanvoelen en geven meer sfeer.</p>
+
+          <div class="cs-sound-grid">
+            <div class="cs-sound-card">
+              <div class="cs-sound-tag">Achtergrond</div>
+              <div class="cs-sound-desc">Jungle geluiden om de gehele animatie wat meer sfeer te bieden.</div>
+            </div>
+            <div class="cs-sound-card">
+              <div class="cs-sound-tag">Zwevende banaan</div>
+              <div class="cs-sound-desc">Een magisch geluid om het zweefeffect speelser en mysterieuzer te maken.</div>
+            </div>
+            <div class="cs-sound-card">
+              <div class="cs-sound-tag">Zippo animatie</div>
+              <div class="cs-sound-desc">Een klik en een korte vlam-sound, waardoor de actie realistischer aanvoelt.</div>
+            </div>
+            <div class="cs-sound-card">
+              <div class="cs-sound-tag">Backflip</div>
+              <div class="cs-sound-desc">Een snelle swoosh tijdens de flip en bij de afsprong, om snelheid en beweging te versterken.</div>
+            </div>
+            <div class="cs-sound-card">
+              <div class="cs-sound-tag">"Roken" van de banaan</div>
+              <div class="cs-sound-desc">Een subtiel inhaleer- en brandgeluid, en geluid bij het uitblazen, om de grap duidelijker over te brengen.</div>
+            </div>
+          </div>
+
+          <div class="cs-divider" style="margin-top:24px">
+            <div class="cs-divider-line"></div>
+            <div class="cs-divider-label">Bronnen</div>
+            <div class="cs-divider-line"></div>
+          </div>
+          <p style="margin-top:16px">Alle geluiden komen van <a href="https://freesound.org/" target="_blank" style="color:var(--accent);text-decoration:underline">freesound.org</a>. De referentiefoto voor de backflip-houding is gegenereerd met Google Gemini, op basis van een foto van mijn eigen pet.</p>
+        </div>
+
+        <!-- 08 REFLECTIE -->
+        <div class="cs-block reveal" id="reflectie">
+          <div class="cs-block-label">08 — Reflectie (groei)</div>
+          <h2>Wat ik leerde over animatie</h2>
+          <p>Tijdens dit vak heb ik geleerd hoe ik animatie kan toepassen binnen een ontwerp en hoeveel invloed beweging heeft op de uitstraling van een interface. Omdat ik nog weinig ervaring had met After Effects, heb ik veel tutorials gebruikt om mezelf de basis aan te leren: keyframes, rotaties, timing en het werken met losse layers.</p>
+          <p>Wat goed ging, is dat ik vrij snel een duidelijke stijl en richting had voor mijn project. Ik ben tevreden over hoe de animaties uiteindelijk zijn geworden en vind dat het geheel speels en herkenbaar aanvoelt. Wel denk ik dat de timing van de bewegingen soms nog wat soepeler had gekund: ik vond het lastig om overzicht te houden in After Effects en achteraf bewegingssnelheden aan te passen zonder te knoeien met andere bewegingen.</p>
+          <p>Al met al vond ik dit een leuke opdracht omdat het anders was dan de meeste designopdrachten. Ik heb geleerd hoe je met relatief simpele illustraties toch veel karakter en dynamiek kunt toevoegen door middel van animatie.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECT NAV -->
+<div class="cs-nav-projects">
+  <a href="beeldtaal.html" class="cs-nav-proj">
+    <div class="cs-nav-dir">← Vorig project</div>
+    <div class="cs-nav-proj-title">Beeldtaal</div>
+    <div class="cs-nav-arrow">←</div>
+  </a>
+  <a href="goldenroast.html" class="cs-nav-proj" style="text-align:right">
+    <div class="cs-nav-dir">Volgend project →</div>
+    <div class="cs-nav-proj-title">The Golden Roast</div>
+    <div class="cs-nav-arrow">→</div>
+  </a>
+</div>
+
+<footer>
+  <span class="footer-copy">© 2026 Sam van der Hoorn</span>
+  <a href="portfolio-sam.html" style="font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500">← Alle projecten</a>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lightboxClose">×</span>
+  <img id="lightboxImg" src="" alt=""/>
+</div>
+
+<script>
+  const cursor=document.getElementById('cursor');
+  document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';});
+  document.querySelectorAll('a,.cs-step,.cs-nav-proj,.cs-btn-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>cursor.classList.add('big'));
+    el.addEventListener('mouseleave',()=>cursor.classList.remove('big'));
+  });
+  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  // Lightbox (images only)
+  const lb=document.getElementById('lightbox');
+  const lbImg=document.getElementById('lightboxImg');
+  const lbClose=document.getElementById('lightboxClose');
+  document.querySelectorAll('.cs-img img').forEach(img=>{
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',()=>{
+      lbImg.src=img.src;
+      lb.classList.add('active');
+      document.body.style.overflow='hidden';
+    });
+  });
+  function closeLightbox(){lb.classList.remove('active');document.body.style.overflow='';}
+  lbClose.addEventListener('click',closeLightbox);
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLightbox();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+</script>
+</body>
+</html>

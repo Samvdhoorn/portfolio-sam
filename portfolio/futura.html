@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Futura — Sam van der Hoorn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0a0a;--surface:#111111;--surface2:#161616;
+      --border:#1f1f1f;--border2:#2a2a2a;
+      --text:#f0ede8;--text-muted:#888888;--text-dim:#444444;
+      --accent:#c8b89a;--btn-bg:#e8e0d4;
+      --serif:'Montserrat',system-ui,sans-serif;
+      --sans:'Montserrat',system-ui,sans-serif;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .cursor{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform .15s ease,width .2s,height .2s;transform:translate(-50%,-50%)}
+    .cursor.big{width:32px;height:32px;background:transparent;border:1px solid var(--accent)}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid var(--border);background:rgba(10,10,10,0.97);backdrop-filter:blur(12px)}
+    .nav-logo img{height:32px;width:auto;display:block;filter:brightness(0) invert(1)}
+    .nav-back{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);font-weight:500;transition:color .2s}
+    .nav-back:hover{color:var(--text)}
+    .nav-cta{font-size:12px;font-weight:600;color:var(--bg);background:var(--btn-bg);padding:9px 22px;border-radius:100px;transition:opacity .2s}
+    .nav-cta:hover{opacity:.85}
+
+    /* HERO */
+    .cs-hero{min-height:85vh;padding:100px 48px 72px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+    .cs-hero-grain{position:absolute;inset:0;pointer-events:none;opacity:.6;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")}
+    .cs-eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:20px}
+    .cs-title{font-family:var(--serif);font-size:clamp(36px,4.5vw,60px);line-height:1.05;letter-spacing:-.03em;font-weight:700;opacity:0;animation:fadeUp .9s .1s forwards}
+    .cs-title em{font-style:normal;color:var(--accent)}
+    .cs-sub{font-size:14px;color:var(--text-muted);line-height:1.8;margin-top:24px;font-weight:300;max-width:420px;opacity:0;animation:fadeUp .9s .25s forwards}
+    .cs-meta{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:36px;opacity:0;animation:fadeUp .9s .4s forwards}
+    .cs-meta-item{background:var(--bg);padding:16px 20px}
+    .cs-meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-dim);margin-bottom:5px;font-weight:600}
+    .cs-meta-value{font-size:14px;font-weight:600;letter-spacing:-.01em}
+    .cs-mockup{border-radius:20px;overflow:hidden;border:1px solid var(--border);background:#000;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;opacity:0;animation:fadeUp .9s .3s forwards}
+    .cs-mockup img{width:100%;height:100%;object-fit:cover}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* CONTENT */
+    .container{padding:80px 48px}
+    .cs-grid{display:grid;grid-template-columns:220px 1fr;gap:72px;align-items:start}
+    .cs-sticky{position:sticky;top:88px}
+    .cs-nav-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:16px}
+    .cs-nav-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+    .cs-nav-list a{font-size:12px;color:var(--text-muted);padding:6px 0;display:block;border-left:2px solid var(--border);padding-left:14px;transition:color .2s,border-color .2s;font-weight:500}
+    .cs-nav-list a:hover{color:var(--text);border-color:var(--accent)}
+    .cs-content{display:flex;flex-direction:column;gap:72px}
+    .cs-block-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:16px}
+    .cs-block h2{font-family:var(--serif);font-size:clamp(24px,2.5vw,36px);letter-spacing:-.02em;font-weight:700;line-height:1.15;margin-bottom:20px}
+    .cs-block p{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:300;margin-bottom:16px}
+    .cs-block p:last-child{margin-bottom:0}
+
+    .cs-img{width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);margin:28px 0;display:block}
+    .cs-img img{width:100%;height:auto;display:block}
+    .cs-img.dark{background:#000;border-color:#222}
+
+    .cs-img-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:28px 0}
+    .cs-img-2col .cs-img{margin:0}
+
+    .cs-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+    .cs-tag{font-size:10px;padding:5px 14px;border-radius:100px;border:1px solid var(--border2);color:var(--text-muted);letter-spacing:.06em;font-weight:600}
+
+    .cs-highlight{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 32px;border-left:3px solid var(--accent);margin:24px 0}
+    .cs-highlight p{font-family:var(--serif);font-size:19px;color:var(--text);line-height:1.55;letter-spacing:-.01em;font-weight:400;margin-bottom:0}
+
+    .cs-proto-btn{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#0a0a0a;font-size:13px;font-weight:700;padding:14px 32px;border-radius:100px;transition:opacity .2s;margin-top:24px;letter-spacing:.03em}
+    .cs-proto-btn:hover{opacity:.85}
+
+    /* LIGHTBOX */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:24px}
+    .lightbox.active{opacity:1;pointer-events:all}
+    .lightbox img{max-width:90vw;max-height:88vh;border-radius:12px;object-fit:contain}
+    .lightbox-close{position:fixed;top:24px;right:32px;font-size:28px;color:#fff;cursor:pointer;opacity:.7;transition:opacity .2s;z-index:9999;font-weight:300;line-height:1}
+    .lightbox-close:hover{opacity:1}
+    .zoomable{cursor:zoom-in}
+
+    /* NAV NEXT/PREV */
+    .cs-nav-projects{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+    .cs-nav-proj{padding:40px 48px;display:flex;flex-direction:column;gap:8px;transition:background .2s}
+    .cs-nav-proj:hover{background:var(--surface)}
+    .cs-nav-proj:first-child{border-right:1px solid var(--border)}
+    .cs-nav-dir{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600}
+    .cs-nav-proj-title{font-family:var(--serif);font-size:22px;letter-spacing:-.02em;font-weight:700;color:var(--text);margin-top:4px}
+    .cs-nav-arrow{font-size:20px;color:var(--accent);margin-top:4px}
+
+    footer{padding:22px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
+    .footer-copy{font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500}
+
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    section{border-bottom:1px solid var(--border)}
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <a href="portfolio-sam.html" class="nav-back">← Terug naar portfolio</a>
+  <div class="nav-logo"></div>
+  <a href="portfolio-sam.html#contact" class="nav-cta">Contact →</a>
+</nav>
+
+<!-- HERO -->
+<section class="cs-hero">
+  <div class="cs-hero-grain"></div>
+  <div>
+    <div class="cs-eyebrow">
+      Typografie · Minor CMD · 2026
+    </div>
+    <h1 class="cs-title">Show Your Face<br><em>Futura</em></h1>
+    <p class="cs-sub">Een interactieve digitale letterproef voor Futura, het geometrische schreefloos lettertype uit 1927. Ontworpen als HTML/CSS microsite met animaties en een interactieve slider die de overgang van Arial naar Futura zichtbaar maakt.</p>
+    <div class="cs-meta">
+      <div class="cs-meta-item"><div class="cs-meta-label">Jaar</div><div class="cs-meta-value">2026</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Vak</div><div class="cs-meta-value">Typografie</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Tools</div><div class="cs-meta-value">HTML · CSS · Figma</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Type</div><div class="cs-meta-value">Letterproef</div></div>
+    </div>
+  </div>
+  <div class="cs-mockup">
+    <img src="images-vid/futura-geometrie.png" alt="Futura letterproef"/>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section>
+  <div class="container">
+    <div class="cs-grid">
+
+      <!-- STICKY NAV -->
+      <div class="cs-sticky">
+        <div class="cs-nav-label">Inhoud</div>
+        <ul class="cs-nav-list">
+          <li><a href="#context">Context</a></li>
+          <li><a href="#concept">Concept</a></li>
+          <li><a href="#schermen">De letterproef</a></li>
+          <li><a href="#toepassing">Toepassingen</a></li>
+          <li><a href="#prototype">Prototype</a></li>
+        </ul>
+      </div>
+
+      <div class="cs-content">
+
+        <!-- 01 CONTEXT -->
+        <div class="cs-block reveal" id="context">
+          <div class="cs-block-label">01 — Context</div>
+          <h2>Futura: geometrie als taal</h2>
+          <p>Voor het vak Typografie tijdens mijn minor was de opdracht: ontwerp een digitale letterproef (type specimen) in HTML en CSS voor een zelfgekozen lettertype. De presentatie moest het karakter van het lettertype uitdragen, niet alleen tonen.</p>
+          <p>Mijn keuze viel op Futura, ontworpen in 1927 door Paul Renner. Het lettertype werd sterk beïnvloed door het modernisme en de ideeën van het Bauhaus, waar eenvoud, functionaliteit en geometrische vormen centraal stonden. Futura is gebaseerd op de meest elementaire vormen: de cirkel, de driehoek en het rechthoek.</p>
+          <div class="cs-tags">
+            <span class="cs-tag">HTML & CSS</span>
+            <span class="cs-tag">Typografie</span>
+            <span class="cs-tag">Futura</span>
+            <span class="cs-tag">Bauhaus</span>
+            <span class="cs-tag">Interactief</span>
+          </div>
+        </div>
+
+        <!-- 02 CONCEPT -->
+        <div class="cs-block reveal" id="concept">
+          <div class="cs-block-label">02 — Concept</div>
+          <h2>Laten zien wat je niet ziet</h2>
+          <div class="cs-highlight">
+            <p>"Wat maakt Futura anders? Dat zie je pas als je het vergelijkt."</p>
+          </div>
+          <p style="margin-top:20px">Het centrale idee: een interactieve slider waarmee de bezoeker zelf het verschil tussen een humanistisch lettertype (Arial) en de geometrische vormen van Futura ervaart. Het woord "MODERN" morpht live mee terwijl je sleept.</p>
+          <p>De rest van de microsite laat de oorsprong, geometrie en hedendaagse toepassingen van Futura zien, in stijl die aansluit bij het lettertype zelf: strak, zwart, minimalistisch.</p>
+
+          <div class="cs-img dark">
+            <img src="images-vid/futura-letters.png" alt="Futura letters A O M" class="zoomable"/>
+          </div>
+        </div>
+
+        <!-- 03 DE LETTERPROEF -->
+        <div class="cs-block reveal" id="schermen">
+          <div class="cs-block-label">03 — De letterproef</div>
+          <h2>Van Arial naar Futura</h2>
+          <p>De interactieve slider vormt het hart van de presentatie. Links start je met het woord "MODERN" in Arial, een humanistisch lettertype. Door te slepen verschuif je de letter stap voor stap naar de geometrische versie in Futura. Het verschil wordt letterlijk voelbaar.</p>
+
+          <div class="cs-img-2col">
+            <div class="cs-img dark">
+              <img src="images-vid/slider-begin-a.png" alt="Slider begin — Arial A" class="zoomable"/>
+            </div>
+            <div class="cs-img" style="background:#fff">
+              <img src="images-vid/slider-eind-a.png" alt="Slider eind — Futura A geometrie" class="zoomable"/>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:-12px">Links: de lettervorm in Arial. Rechts: Futura ontleed: de A als perfecte driehoek.</p>
+        </div>
+
+        <!-- 04 TOEPASSINGEN -->
+        <div class="cs-block reveal" id="toepassing">
+          <div class="cs-block-label">04 — Toepassingen</div>
+          <h2>Futura in de wereld</h2>
+          <p>Futura is een van de meest gebruikte lettertypen ter wereld. Van NASA's Apollo-missie tot Nike's "Just Do It": de strakke geometrie maakt de boodschap krachtig, direct en tijdloos herkenbaar.</p>
+
+          <div class="cs-img" style="background:#1a1aff">
+            <img src="images-vid/nike.png" alt="Nike Just Do It in Futura Bold" class="zoomable"/>
+          </div>
+          <p style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:-12px">De slogan "Just Do It" van Nike werd jarenlang gezet in Futura Bold.</p>
+
+          <div class="cs-img dark">
+            <img src="images-vid/futura-geometrie.png" alt="Bauhaus vormen — Modernisme, Geometrie, Functionaliteit" class="zoomable"/>
+          </div>
+          <p style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:-12px">De drie basisvormen van het Bauhaus als visuele taal: driehoek, cirkel, rechthoek.</p>
+        </div>
+
+        <!-- 05 PROTOTYPE -->
+        <div class="cs-block reveal" id="prototype">
+          <div class="cs-block-label">05 — Prototype</div>
+          <h2>Bekijk de interactieve letterproef</h2>
+          <p>De volledige microsite is gebouwd in HTML en CSS en interactief te bekijken via Figma. Gebruik de slider, blader door de secties en ervaar zelf wat Futura onderscheidt van andere lettertypen.</p>
+          <a href="https://www.figma.com/proto/PHC3WTDnd6EScAXA0FCFWs/FUTURA?page-id=0%3A1&node-id=11-66&viewport=-90%2C120%2C0.04&t=O4nygAhomeIqAnBA-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=11%3A66" class="cs-proto-btn" target="_blank">
+            Bekijk prototype →
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECT NAV -->
+<div class="cs-nav-projects">
+  <a href="goldenroast.html" class="cs-nav-proj">
+    <div class="cs-nav-dir">← Vorig project</div>
+    <div class="cs-nav-proj-title">The Golden Roast</div>
+    <div class="cs-nav-arrow">←</div>
+  </a>
+  <a href="portfolio-sam.html" class="cs-nav-proj" style="text-align:right">
+    <div class="cs-nav-dir">Alle projecten →</div>
+    <div class="cs-nav-proj-title">Portfolio</div>
+    <div class="cs-nav-arrow">→</div>
+  </a>
+</div>
+
+<footer>
+  <span class="footer-copy">© 2025 Sam van der Hoorn</span>
+  <a href="portfolio-sam.html" style="font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500">← Alle projecten</a>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lightboxClose">×</span>
+  <img id="lightboxImg" src="" alt=""/>
+</div>
+
+<script>
+  const cursor=document.getElementById('cursor');
+  document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';});
+  document.querySelectorAll('a,.cs-nav-proj').forEach(el=>{
+    el.addEventListener('mouseenter',()=>cursor.classList.add('big'));
+    el.addEventListener('mouseleave',()=>cursor.classList.remove('big'));
+  });
+  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  const lb=document.getElementById('lightbox');
+  const lbImg=document.getElementById('lightboxImg');
+  const lbClose=document.getElementById('lightboxClose');
+  document.querySelectorAll('.zoomable,.cs-mockup img').forEach(img=>{
+    img.addEventListener('click',()=>{lbImg.src=img.src;lb.classList.add('active');document.body.style.overflow='hidden';});
+  });
+  function closeLightbox(){lb.classList.remove('active');document.body.style.overflow='';}
+  lbClose.addEventListener('click',closeLightbox);
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLightbox();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+</script>
+</body>
+</html>

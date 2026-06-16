@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>De Visindustrie — Sam van der Hoorn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0a0a;--surface:#111111;--surface2:#161616;
+      --border:#1f1f1f;--border2:#2a2a2a;
+      --text:#f0ede8;--text-muted:#888888;--text-dim:#444444;
+      --accent:#c8b89a;--btn-bg:#e8e0d4;
+      --ocean:#1a4a6b;
+      --serif:'Montserrat',system-ui,sans-serif;
+      --sans:'Montserrat',system-ui,sans-serif;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .cursor{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform .15s ease,width .2s,height .2s;transform:translate(-50%,-50%)}
+    .cursor.big{width:32px;height:32px;background:transparent;border:1px solid var(--accent)}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;border-bottom:1px solid var(--border);background:rgba(10,10,10,0.97);backdrop-filter:blur(12px)}
+    .nav-logo img{height:32px;width:auto;display:block;filter:brightness(0) invert(1)}
+    .nav-back{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);font-weight:500;transition:color .2s}
+    .nav-back:hover{color:var(--text)}
+    .nav-cta{font-size:12px;font-weight:600;color:var(--bg);background:var(--btn-bg);padding:9px 22px;border-radius:100px;transition:opacity .2s}
+    .nav-cta:hover{opacity:.85}
+
+    /* HERO */
+    .cs-hero{min-height:85vh;padding:100px 48px 72px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+    .cs-hero-grain{position:absolute;inset:0;pointer-events:none;opacity:.6;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")}
+    .cs-eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:20px}
+    .cs-title{font-family:var(--serif);font-size:clamp(36px,4.5vw,60px);line-height:1.05;letter-spacing:-.03em;font-weight:700;opacity:0;animation:fadeUp .9s .1s forwards}
+    .cs-title em{font-style:normal;color:var(--accent)}
+    .cs-sub{font-size:14px;color:var(--text-muted);line-height:1.8;margin-top:24px;font-weight:300;max-width:420px;opacity:0;animation:fadeUp .9s .25s forwards}
+    .cs-meta{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:36px;opacity:0;animation:fadeUp .9s .4s forwards}
+    .cs-meta-item{background:var(--bg);padding:16px 20px}
+    .cs-meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-dim);margin-bottom:5px;font-weight:600}
+    .cs-meta-value{font-size:14px;font-weight:600;letter-spacing:-.01em}
+    .cs-mockup{border-radius:20px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;opacity:0;animation:fadeUp .9s .3s forwards}
+    .cs-mockup img{width:100%;height:100%;object-fit:cover;cursor:zoom-in}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* CONTENT */
+    .container{padding:80px 48px}
+    .cs-grid{display:grid;grid-template-columns:220px 1fr;gap:72px;align-items:start}
+    .cs-sticky{position:sticky;top:88px}
+    .cs-nav-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:16px}
+    .cs-nav-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+    .cs-nav-list a{font-size:12px;color:var(--text-muted);padding:6px 0;display:block;border-left:2px solid var(--border);padding-left:14px;transition:color .2s,border-color .2s;font-weight:500}
+    .cs-nav-list a:hover{color:var(--text);border-color:var(--accent)}
+    .cs-content{display:flex;flex-direction:column;gap:72px}
+    .cs-block-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:16px}
+    .cs-block h2{font-family:var(--serif);font-size:clamp(24px,2.5vw,36px);letter-spacing:-.02em;font-weight:700;line-height:1.15;margin-bottom:20px}
+    .cs-block p{font-size:14px;color:var(--text-muted);line-height:1.85;font-weight:300;margin-bottom:16px}
+    .cs-block p:last-child{margin-bottom:0}
+
+    .cs-img{width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface2);margin:28px 0;display:block}
+    .cs-img img{width:100%;height:auto;display:block}
+
+    .cs-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+    .cs-tag{font-size:10px;padding:5px 14px;border-radius:100px;border:1px solid var(--border2);color:var(--text-muted);letter-spacing:.06em;font-weight:600}
+
+    .cs-highlight{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 32px;border-left:3px solid var(--accent);margin:24px 0}
+    .cs-highlight p{font-family:var(--serif);font-size:19px;color:var(--text);line-height:1.55;letter-spacing:-.01em;font-weight:400;margin-bottom:0}
+
+    .cs-steps{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+    .cs-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+    .cs-step-num{font-size:10px;letter-spacing:.15em;color:var(--accent);font-weight:600;margin-bottom:8px}
+    .cs-step-title{font-size:14px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+    .cs-step-desc{font-size:12px;color:var(--text-muted);line-height:1.6;font-weight:300}
+
+    .cs-sections{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+    .cs-section-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+    .cs-section-num{font-size:10px;letter-spacing:.15em;color:var(--ocean);font-weight:600;margin-bottom:8px;color:#5ba3d4}
+    .cs-section-title{font-size:14px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+    .cs-section-desc{font-size:12px;color:var(--text-muted);line-height:1.6;font-weight:300}
+
+    .cs-live-btn{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#0a0a0a;font-size:13px;font-weight:700;padding:14px 32px;border-radius:100px;transition:opacity .2s;margin-top:24px;letter-spacing:.03em}
+    .cs-live-btn:hover{opacity:.85}
+
+    /* LIGHTBOX */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:24px}
+    .lightbox.active{opacity:1;pointer-events:all}
+    .lightbox img{max-width:90vw;max-height:88vh;border-radius:12px;object-fit:contain}
+    .lightbox-close{position:fixed;top:24px;right:32px;font-size:28px;color:#fff;cursor:pointer;opacity:.7;transition:opacity .2s;z-index:9999;font-weight:300;line-height:1}
+    .lightbox-close:hover{opacity:1}
+    .zoomable{cursor:zoom-in}
+
+    /* NAV NEXT/PREV */
+    .cs-nav-projects{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+    .cs-nav-proj{padding:40px 48px;display:flex;flex-direction:column;gap:8px;transition:background .2s}
+    .cs-nav-proj:hover{background:var(--surface)}
+    .cs-nav-proj:first-child{border-right:1px solid var(--border)}
+    .cs-nav-dir{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600}
+    .cs-nav-proj-title{font-family:var(--serif);font-size:22px;letter-spacing:-.02em;font-weight:700;color:var(--text);margin-top:4px}
+    .cs-nav-arrow{font-size:20px;color:var(--accent);margin-top:4px}
+
+    footer{padding:22px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
+    .footer-copy{font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500}
+
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    section{border-bottom:1px solid var(--border)}
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <a href="portfolio-sam.html" class="nav-back">← Terug naar portfolio</a>
+  <div class="nav-logo"></div>
+  <a href="portfolio-sam.html#contact" class="nav-cta">Contact →</a>
+</nav>
+
+<!-- HERO -->
+<section class="cs-hero">
+  <div class="cs-hero-grain"></div>
+  <div>
+    <div class="cs-eyebrow">
+      Meesterproef · Minor VID X · 2026
+    </div>
+    <h1 class="cs-title">De Visindustrie<br><em>Interactieve interface</em></h1>
+    <p class="cs-sub">Een cinematografische webinterface over de misstanden van de flyshoot-visserij. Gebaseerd op onderzoeksjournalistiek van Follow the Money, gebouwd als een duik in de zee.</p>
+    <div class="cs-meta">
+      <div class="cs-meta-item"><div class="cs-meta-label">Jaar</div><div class="cs-meta-value">2026</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Vak</div><div class="cs-meta-value">Meesterproef</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Tools</div><div class="cs-meta-value">HTML · CSS · JS</div></div>
+      <div class="cs-meta-item"><div class="cs-meta-label">Type</div><div class="cs-meta-value">Webinterface</div></div>
+    </div>
+  </div>
+  <div class="cs-mockup">
+    <img src="images/mockup-visindustrie.png" alt="De Visindustrie mockup"/>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section>
+  <div class="container">
+    <div class="cs-grid">
+
+      <div class="cs-sticky">
+        <div class="cs-nav-label">Inhoud</div>
+        <ul class="cs-nav-list">
+          <li><a href="#context">Context</a></li>
+          <li><a href="#concept">Concept</a></li>
+          <li><a href="#secties">De interface</a></li>
+          <li><a href="#proces">Ontwerpproces</a></li>
+          <li><a href="#live">Bekijk live</a></li>
+        </ul>
+      </div>
+
+      <div class="cs-content">
+
+        <!-- 01 CONTEXT -->
+        <div class="cs-block reveal" id="context">
+          <div class="cs-block-label">01 — Context</div>
+          <h2>Meesterproef Minor Visual Interface Design</h2>
+          <p>Voor de meesterproef van de Minor Visual Interface Design (VID X) aan de HvA was de opdracht: maak een visuele en interactieve interface voor een zelfgekozen casus, waarbij je jouw persoonlijke visie als ontwerper laat zien.</p>
+          <p>Ik koos voor het FTM-dossier over de visindustrie, specifiek het artikel van journalist Remy Käller over de flyshoot-methode. Een vismethode waarbij sleepnetten over de zeebodem worden getrokken en alles vernietigen wat ze tegenkomen. Massale bijvangst, verwoeste ecosystemen en geen publieke aandacht.</p>
+          <div class="cs-tags">
+            <span class="cs-tag">HTML/CSS/JS</span>
+            <span class="cs-tag">Follow the Money</span>
+            <span class="cs-tag">Flyshoot-visserij</span>
+            <span class="cs-tag">Interactief</span>
+            <span class="cs-tag">Cinematografisch</span>
+          </div>
+        </div>
+
+        <!-- 02 CONCEPT -->
+        <div class="cs-block reveal" id="concept">
+          <div class="cs-block-label">02 — Concept</div>
+          <h2>Een duik in de zee</h2>
+          <div class="cs-highlight">
+            <p>"Bovenaan ben je aan het oppervlak: rustig, mooi en cinematografisch. Hoe verder je scrollt, hoe dieper je gaat en hoe donkerder de werkelijkheid wordt."</p>
+          </div>
+          <p style="margin-top:20px">De interface neemt een duidelijk standpunt in zonder te schreeuwen. De interactie is geen decoratie maar de boodschap zelf: als je zelf een flyshoot-net sleept en ziet hoe de tellers oplopen, voel je de impact op een manier die tekst alleen niet kan.</p>
+          <p>De keuze om de website volledig in het Engels te bouwen maakte een David Attenborough-stijl voice-over mogelijk, waardoor de interface het gewicht en de toon van een echte natuur-documentaire krijgt.</p>
+
+          <div class="cs-img">
+            <img src="images-visindustrie/visindustrie-final.png" alt="De Visindustrie volledig" class="zoomable"/>
+          </div>
+        </div>
+
+        <!-- 03 DE INTERFACE -->
+        <div class="cs-block reveal" id="secties">
+          <div class="cs-block-label">03 — De interface</div>
+          <h2>Zeven secties, één verhaal</h2>
+          <p>De website is opgebouwd als een lineaire reis van het oppervlak naar de bodem. Elke sectie voegt een laag toe aan het verhaal.</p>
+
+          <div class="cs-sections">
+            <div class="cs-section-card">
+              <div class="cs-section-num">01</div>
+              <div class="cs-section-title">Hero</div>
+              <div class="cs-section-desc">Grote titel, vissen reageren op de cursor. Live teller toont hoeveel ton vis er vandaag al is weggevist.</div>
+            </div>
+            <div class="cs-section-card">
+              <div class="cs-section-num">02</div>
+              <div class="cs-section-title">Context</div>
+              <div class="cs-section-desc">Persoonlijk verhaal over de zee, FTM-citaat en een visuele 71%-cirkel over oceaanoppervlak.</div>
+            </div>
+            <div class="cs-section-card">
+              <div class="cs-section-num">03</div>
+              <div class="cs-section-title">Flyshoot interactie</div>
+              <div class="cs-section-desc">Schip aan oppervlak, sleepnet over de zeebodem. Realtime dashboard: gevangen vis, bijvangst, vernielde bodem, CO₂.</div>
+            </div>
+            <div class="cs-section-card">
+              <div class="cs-section-num">04</div>
+              <div class="cs-section-title">De harde cijfers</div>
+              <div class="cs-section-desc">Industrieel donker thema. Drie voor/na-verhalen: 90% minder vis, 38% bijvangst, 40% minder biodiversiteit.</div>
+            </div>
+            <div class="cs-section-card">
+              <div class="cs-section-num">05</div>
+              <div class="cs-section-title">Tijdlijn</div>
+              <div class="cs-section-desc">Vier stappen van pulsvisverbod naar lege zee, hover voor extra uitleg per moment.</div>
+            </div>
+            <div class="cs-section-card">
+              <div class="cs-section-num">06</div>
+              <div class="cs-section-title">Persoonlijk verhaal</div>
+              <div class="cs-section-desc">Waarom de zee mij raakt als reiziger en natuurliefhebber. De persoonlijke verbinding met het onderwerp.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 04 ONTWERPPROCES -->
+        <div class="cs-block reveal" id="proces">
+          <div class="cs-block-label">04 — Ontwerpproces</div>
+          <h2>Van artikel naar interface</h2>
+          <p>Het proces begon met het grondig lezen van het FTM-dossier en wetenschappelijke data over bodemtrawlen. Vanuit dat onderzoek groeide het concept organisch richting een cinematografische ervaring.</p>
+
+          <div class="cs-steps">
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 01</div>
+              <div class="cs-step-title">Onderzoek</div>
+              <div class="cs-step-desc">FTM-artikel gelezen, wetenschappelijke data verzameld over flyshoot-visserij, moodboard op Pinterest.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 02</div>
+              <div class="cs-step-title">Concept</div>
+              <div class="cs-step-desc">Persoonlijke visie geformuleerd, structuur bepaald (oppervlak naar diepte), kleurpalet en typografie gekozen.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 03</div>
+              <div class="cs-step-title">Schetsen</div>
+              <div class="cs-step-desc">Lo-fi wireframes op papier en digitaal, sectie voor sectie uitgewerkt in Figma.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 04</div>
+              <div class="cs-step-title">Prototype V1</div>
+              <div class="cs-step-desc">Eerste werkende versie met hero, trawler-interactie, cijfers en afsluiting. Gebouwd in HTML/CSS/JS.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 05</div>
+              <div class="cs-step-title">Feedback & iteratie</div>
+              <div class="cs-step-desc">Twee feedbackrondes met coach. Trawler verbeterd, data-dashboard toegevoegd, tijdlijn en voice-over toegevoegd.</div>
+            </div>
+            <div class="cs-step">
+              <div class="cs-step-num">Stap 06</div>
+              <div class="cs-step-title">Definitief</div>
+              <div class="cs-step-desc">Volledige website met zeven secties, custom cursor, dieptemeter-navigatie, voice-over en achtergrondmuziek.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 05 LIVE -->
+        <div class="cs-block reveal" id="live">
+          <div class="cs-block-label">05 — Bekijk live</div>
+          <h2>Ervaar het zelf</h2>
+          <p>De volledige interface is live te bekijken via GitHub Pages. Sleep het flyshoot-net, bekijk de tellers oplopen en lees het verhaal van de zeebodem.</p>
+          <a href="https://samvdhoorn.github.io/visindustrie-meesterproef/" class="cs-live-btn" target="_blank">
+            Bekijk de live website →
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECT NAV -->
+<div class="cs-nav-projects">
+  <a href="portfolio-sam.html" class="cs-nav-proj">
+    <div class="cs-nav-dir">← Alle projecten</div>
+    <div class="cs-nav-proj-title">Portfolio</div>
+    <div class="cs-nav-arrow">←</div>
+  </a>
+  <a href="beeldtaal.html" class="cs-nav-proj" style="text-align:right">
+    <div class="cs-nav-dir">Volgend project →</div>
+    <div class="cs-nav-proj-title">Beeldtaal</div>
+    <div class="cs-nav-arrow">→</div>
+  </a>
+</div>
+
+<footer>
+  <span class="footer-copy">© 2025 Sam van der Hoorn</span>
+  <a href="portfolio-sam.html" style="font-size:11px;color:var(--text-dim);letter-spacing:.05em;font-weight:500">← Alle projecten</a>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lightboxClose">×</span>
+  <img id="lightboxImg" src="" alt=""/>
+</div>
+
+<script>
+  const cursor=document.getElementById('cursor');
+  document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';});
+  document.querySelectorAll('a,.cs-step,.cs-section-card,.cs-nav-proj').forEach(el=>{
+    el.addEventListener('mouseenter',()=>cursor.classList.add('big'));
+    el.addEventListener('mouseleave',()=>cursor.classList.remove('big'));
+  });
+  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  const lb=document.getElementById('lightbox');
+  const lbImg=document.getElementById('lightboxImg');
+  const lbClose=document.getElementById('lightboxClose');
+  document.querySelectorAll('.zoomable,.cs-mockup img').forEach(img=>{
+    img.addEventListener('click',()=>{lbImg.src=img.src;lb.classList.add('active');document.body.style.overflow='hidden';});
+  });
+  function closeLightbox(){lb.classList.remove('active');document.body.style.overflow='';}
+  lbClose.addEventListener('click',closeLightbox);
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLightbox();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+</script>
+</body>
+</html>
